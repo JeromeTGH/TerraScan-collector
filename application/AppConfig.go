@@ -1,21 +1,46 @@
 package application
 
+import (
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
+
 type Config struct {
 	Lcd struct {
-		url string
+		Url string `yaml:"url"`
 	}
 	Bdd struct {
-		host_name string
-		bdd_name  string
-		user_name string
-		password  string
-		port      int16
+		HostName string `yaml:"host_name"`
+		BddName  string `yaml:"bdd_name"`
+		UserName string `yaml:"user_name"`
+		Password  string `yaml:"password"`
+		Port      int16 `yaml:"port"`
 	}
 	Email struct {
-		host_name string
-		smtp_port int16
-		from      string
-		pwd       string
-		to        string
+		HostName string `yaml:"host_name"`
+		SmtpPort int16 `yaml:"smtp_port"`
+		From      string `yaml:"from"`
+		Pwd       string `yaml:"pwd"`
+		To        string `yaml:"to"`
 	}
+}
+
+func LoadConfig() *Config {
+
+	var appConfig Config
+
+	privateData, errOsReadFile := os.ReadFile("application/private/private.yaml")
+
+	if errOsReadFile != nil {
+		panic(errOsReadFile)
+	}
+
+	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &appConfig)
+
+	if errYamlUnmarshal != nil {
+		panic(errYamlUnmarshal)
+	}
+
+	return &appConfig
 }
