@@ -26,9 +26,7 @@ type Config struct {
 	}
 }
 
-func LoadConfig() *Config {
-
-	var appConfig Config
+func LoadConfig(appConfig *Config)  {
 
 	privateData, errOsReadFile := os.ReadFile("application/private/private.yaml")
 
@@ -42,5 +40,4 @@ func LoadConfig() *Config {
 		panic(errYamlUnmarshal)
 	}
 
-	return &appConfig
 }
