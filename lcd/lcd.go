@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/application"
@@ -19,10 +20,10 @@ func GetTotalSupplies(appConfig *application.Config) {
 	}
 
 	type totalSupplies struct {
-		Supply []supplies      `json:"supply"`
+		Supply []supplies       `json:"supply"`
 		Pagination struct {
-			Next_key string      `json:"next_key"`
-			Total string     `json:"total"`
+			Next_key string     `json:"next_key"`
+			Total string     	`json:"total"`
 		}
 	}
 
@@ -43,23 +44,42 @@ func GetTotalSupplies(appConfig *application.Config) {
 		panic(errGet)
 	}
 
-	// Lecture de la réponse
+	// Lecture de la réponse du GET
 	body, errReadAll := io.ReadAll(reponse.Body)
 	if errReadAll != nil {
 		panic(errReadAll)
 	}
 
-	// Transformation byte[] -> string avec du contenu JSON
+	// Transformation byte[] -> string pour avoir du contenu JSON "en clair"
 	reponseJSON := string(body)
 
 	// Stockage des données dans une struct
 	dataStruct := totalSupplies{}
 	json.Unmarshal([]byte(reponseJSON), &dataStruct)
 
+	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
+	var LUNCtotalSupply float64 = -1
+	var USTCtotalSupply float64 = -1
+	for i:=0 ; i<len(dataStruct.Supply) ; i++ {
+		if dataStruct.Supply[i].Denom == "uluna" {
+			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
+			if errUluna != nil {
+				panic(errUluna)
+			}
+			LUNCtotalSupply = uluna / 1000000
+		}
+		if dataStruct.Supply[i].Denom == "uusd" {
+			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
+			if errUusd != nil {
+				panic(errUusd)
+			}
+			USTCtotalSupply = uusd / 1000000
+		}
+	}
 
 
 	// Afichage dans la console, pour commencer
-	fmt.Println(dataStruct.Supply[1].Denom)
-	fmt.Println(dataStruct.Supply[1].Amount)
+	fmt.Printf("LUNCtotalSupply = %f\n", LUNCtotalSupply)
+	fmt.Printf("USTCtotalSupply = %f\n", USTCtotalSupply)
 
 }
