@@ -1,10 +1,13 @@
 package application
 
 import (
+	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
 )
+
+const configDataFile = "application/private/private.yaml"
 
 type Config struct {
 	Lcd struct {
@@ -26,16 +29,33 @@ type Config struct {
 	}
 }
 
-func LoadConfig(appConfig *Config)  {
+func LoadConfig(appConfig *Config) {
 
-	privateData, errOsReadFile := os.ReadFile("application/private/private.yaml")
+	// Teste la présence du fichier de configuration
+	_, errStat := os.Stat(configDataFile)
+	if errStat != nil {
+		if os.IsNotExist(errStat) {
+			fmt.Println("Config file not found.")
+			os.Exit(500)
+		} else {
+			panic(errStat)
+		}
+	}
 
+	// Lit le fichier contenant les données de config
+	privateData, errOsReadFile := os.ReadFile(configDataFile)
 	if errOsReadFile != nil {
 		panic(errOsReadFile)
 	}
 
-	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &appConfig)
+	// Mesure la quantité de données, pour savoir le fichier de config contient un "minimum" de données
+	if len(privateData) < 300 {
+		fmt.Println("Not enough data, in config file.")
+		os.Exit(500)
+	}
 
+	// Parse le fichier lu, pour le mettre dans la structure de config
+	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &appConfig)
 	if errYamlUnmarshal != nil {
 		panic(errYamlUnmarshal)
 	}
