@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/JeromeTGH/TerraScan-collector/application"
+	"github.com/JeromeTGH/TerraScan-collector/lcd"
 )
 
 // Variables globales
@@ -11,8 +10,10 @@ var appConfig application.Config
 
 func main() {
 
-	// TEST : Récupération de la config
+	// Chargement des données de configuration, dans la variable "appConfig"
 	application.LoadConfig(&appConfig)
-	fmt.Println(appConfig.Lcd.Url)
+
+	// Chargement des données, en faisant appel au LCD (on passe la config dans la foulée, pour transmettre l'URL du LCD, stocké dedans)
+	lcd.GetTotalSupplies(&appConfig)
 
 }
