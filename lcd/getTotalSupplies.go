@@ -2,6 +2,7 @@ package lcd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -30,7 +31,10 @@ type structReponseTotalSupplies struct {
 }
 
 
-func GetTotalSupplies(appConfig *application.Config) structReponseTotalSupplies {
+func GetTotalSupplies(appConfig *application.Config) (structReponseTotalSupplies, error) {
+
+	// Initialisation de la struct qui sera renvoyée en retour
+	var reponseEnRetour structReponseTotalSupplies
 
 	// Path, pour accéder à ce qui nous intéresse
 	var path = "/cosmos/bank/v1beta1/supply?pagination.limit=9999"
@@ -46,13 +50,13 @@ func GetTotalSupplies(appConfig *application.Config) structReponseTotalSupplies 
 	// Lancement du GET
 	reponse, errGet := client.Get(LCDurl + path)
 	if errGet != nil {
-		panic(errGet)
+		return reponseEnRetour, errors.New("failed go fetch 'total supplies' on LCD")
 	}
 
 	// Lecture de la réponse du GET
 	body, errReadAll := io.ReadAll(reponse.Body)
 	if errReadAll != nil {
-		panic(errReadAll)
+		return reponseEnRetour, errors.New("failed go read 'total supplies' answer, from LCD")
 	}
 
 	// Transformation byte[] -> string pour avoir du contenu JSON "en clair"
@@ -69,14 +73,14 @@ func GetTotalSupplies(appConfig *application.Config) structReponseTotalSupplies 
 		if dataStruct.Supply[i].Denom == "uluna" {
 			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUluna != nil {
-				panic(errUluna)
+				return reponseEnRetour, errors.New("failed go convert 'uluna' amount in 'lunc'")
 			}
 			LUNCtotalSupply = uluna / 1000000
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
 			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUusd != nil {
-				panic(errUusd)
+				return reponseEnRetour, errors.New("failed go convert 'uusd' amount in 'ustc'")
 			}
 			USTCtotalSupply = uusd / 1000000
 		}
@@ -87,9 +91,8 @@ func GetTotalSupplies(appConfig *application.Config) structReponseTotalSupplies 
 	fmt.Printf("USTCtotalSupply = %f\n", USTCtotalSupply)
 
 	// Et renvoi à l'appeleur
-	var reponseEnRetour structReponseTotalSupplies
 	reponseEnRetour.luncTotalSupply = LUNCtotalSupply
 	reponseEnRetour.ustcTotalSupply = USTCtotalSupply
-	return reponseEnRetour
+	return reponseEnRetour, nil
 
 }
