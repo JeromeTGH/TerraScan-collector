@@ -13,14 +13,11 @@ import (
 
 func GetTotalSupplies(appConfig *application.Config) {
 
-	// Structure des données, qui seront récupérées auprès du LCD (au format JSON, nativement)
-	type supplies struct {
-		Denom string      `json:"denom"`
-		Amount string     `json:"amount"`
-	}
-
-	type totalSupplies struct {
-		Supply []supplies       `json:"supply"`
+	type totalSuppliesLcdStructure struct {
+		Supply [] struct {
+			Denom string      `json:"denom"`
+			Amount string     `json:"amount"`
+		}
 		Pagination struct {
 			Next_key string     `json:"next_key"`
 			Total string     	`json:"total"`
@@ -54,7 +51,7 @@ func GetTotalSupplies(appConfig *application.Config) {
 	reponseJSON := string(body)
 
 	// Stockage des données dans une struct
-	dataStruct := totalSupplies{}
+	dataStruct := totalSuppliesLcdStructure{}
 	json.Unmarshal([]byte(reponseJSON), &dataStruct)
 
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
@@ -76,6 +73,15 @@ func GetTotalSupplies(appConfig *application.Config) {
 			USTCtotalSupply = uusd / 1000000
 		}
 	}
+
+
+	// Conversion de ces valeurs en string, et renvoi à l'appeleur
+
+
+
+
+
+
 
 
 	// Afichage dans la console, pour commencer
