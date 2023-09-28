@@ -11,18 +11,26 @@ import (
 	"github.com/JeromeTGH/TerraScan-collector/application"
 )
 
-func GetTotalSupplies(appConfig *application.Config) {
 
-	type totalSuppliesLcdStructure struct {
-		Supply [] struct {
-			Denom string      `json:"denom"`
-			Amount string     `json:"amount"`
-		}
-		Pagination struct {
-			Next_key string     `json:"next_key"`
-			Total string     	`json:"total"`
-		}
+type totalSuppliesLcdStructure struct {
+	Supply [] struct {
+		Denom string      `json:"denom"`
+		Amount string     `json:"amount"`
 	}
+	Pagination struct {
+		Next_key string     `json:"next_key"`
+		Total string     	`json:"total"`
+	}
+}
+
+
+type structReponseTotalSupplies struct {
+	luncTotalSupply float64
+	ustcTotalSupply float64
+}
+
+
+func GetTotalSupplies(appConfig *application.Config) structReponseTotalSupplies {
 
 	// Path, pour accéder à ce qui nous intéresse
 	var path = "/cosmos/bank/v1beta1/supply?pagination.limit=9999"
@@ -74,18 +82,14 @@ func GetTotalSupplies(appConfig *application.Config) {
 		}
 	}
 
-
-	// Conversion de ces valeurs en string, et renvoi à l'appeleur
-
-
-
-
-
-
-
-
-	// Afichage dans la console, pour commencer
+	// Afichage dans la console (debug)
 	fmt.Printf("LUNCtotalSupply = %f\n", LUNCtotalSupply)
 	fmt.Printf("USTCtotalSupply = %f\n", USTCtotalSupply)
+
+	// Et renvoi à l'appeleur
+	var reponseEnRetour structReponseTotalSupplies
+	reponseEnRetour.luncTotalSupply = LUNCtotalSupply
+	reponseEnRetour.ustcTotalSupply = USTCtotalSupply
+	return reponseEnRetour
 
 }
