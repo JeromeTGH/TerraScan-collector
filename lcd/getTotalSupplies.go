@@ -3,7 +3,6 @@ package lcd
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -15,26 +14,29 @@ import (
 
 type totalSuppliesLcdStructure struct {
 	Supply [] struct {
-		Denom string      `json:"denom"`
-		Amount string     `json:"amount"`
+		Denom 	string      `json:"denom"`
+		Amount 	string     	`json:"amount"`
 	}
 	Pagination struct {
 		Next_key string     `json:"next_key"`
-		Total string     	`json:"total"`
+		Total 	 string    	`json:"total"`
+	}
+	Error struct {
+		Code 	int 		`json:"code"`
+		Message string		`json:"message"`
 	}
 }
 
-
-type structReponseTotalSupplies struct {
-	luncTotalSupply float64
-	ustcTotalSupply float64
+type StructReponseTotalSupplies struct {
+	LuncTotalSupply float64
+	UstcTotalSupply float64
 }
 
 
-func GetTotalSupplies(appConfig *application.Config) (structReponseTotalSupplies, error) {
+func GetTotalSupplies(appConfig *application.Config) (StructReponseTotalSupplies, error) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
-	var reponseEnRetour structReponseTotalSupplies
+	var reponseEnRetour StructReponseTotalSupplies
 
 	// Path, pour accéder à ce qui nous intéresse
 	var path = "/cosmos/bank/v1beta1/supply?pagination.limit=9999"
@@ -66,6 +68,11 @@ func GetTotalSupplies(appConfig *application.Config) (structReponseTotalSupplies
 	dataStruct := totalSuppliesLcdStructure{}
 	json.Unmarshal([]byte(reponseJSON), &dataStruct)
 
+	// Sortie si erreur retournée
+	if dataStruct.Error.Message != "" {
+		return reponseEnRetour, errors.New("an error was returned by LCD, while fetching 'total supplies'")
+	}
+
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
 	var LUNCtotalSupply float64 = -1
 	var USTCtotalSupply float64 = -1
@@ -86,13 +93,9 @@ func GetTotalSupplies(appConfig *application.Config) (structReponseTotalSupplies
 		}
 	}
 
-	// Afichage dans la console (debug)
-	fmt.Printf("LUNCtotalSupply = %f\n", LUNCtotalSupply)
-	fmt.Printf("USTCtotalSupply = %f\n", USTCtotalSupply)
-
 	// Et renvoi à l'appeleur
-	reponseEnRetour.luncTotalSupply = LUNCtotalSupply
-	reponseEnRetour.ustcTotalSupply = USTCtotalSupply
+	reponseEnRetour.LuncTotalSupply = LUNCtotalSupply
+	reponseEnRetour.UstcTotalSupply = USTCtotalSupply
 	return reponseEnRetour, nil
 
 }
