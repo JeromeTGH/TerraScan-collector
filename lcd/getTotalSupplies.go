@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/JeromeTGH/TerraScan-collector/application"
+	"github.com/JeromeTGH/TerraScan-collector/config"
 )
 
 
@@ -33,7 +33,7 @@ type StructReponseTotalSupplies struct {
 }
 
 
-func GetTotalSupplies(appConfig *application.Config) (StructReponseTotalSupplies, error) {
+func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, error) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseTotalSupplies
@@ -46,19 +46,19 @@ func GetTotalSupplies(appConfig *application.Config) (StructReponseTotalSupplies
 
 	// Création d'un client HTTP (avec timeout fixé à 30 secondes)
 	client := &http.Client{
-        Timeout: 30 * time.Second,
+        Timeout: time.Duration(appConfig.Lcd.GetTimeoutInSeconds) * time.Second,
     }
 
 	// Lancement du GET
 	reponse, errGet := client.Get(LCDurl + path)
 	if errGet != nil {
-		return reponseEnRetour, errors.New("failed go fetch 'total supplies' on LCD")
+		return reponseEnRetour, errors.New("[lcd] failed go fetch 'total supplies' on LCD")
 	}
 
 	// Lecture de la réponse du GET
 	body, errReadAll := io.ReadAll(reponse.Body)
 	if errReadAll != nil {
-		return reponseEnRetour, errors.New("failed go read 'total supplies' answer, from LCD")
+		return reponseEnRetour, errors.New("[lcd] failed go read 'total supplies' answer, from LCD")
 	}
 
 	// Transformation byte[] -> string pour avoir du contenu JSON "en clair"
@@ -70,7 +70,7 @@ func GetTotalSupplies(appConfig *application.Config) (StructReponseTotalSupplies
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, errors.New("an error was returned by LCD, while fetching 'total supplies'")
+		return reponseEnRetour, errors.New("[lcd] an error was returned by LCD, while fetching 'total supplies'")
 	}
 
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
@@ -80,14 +80,14 @@ func GetTotalSupplies(appConfig *application.Config) (StructReponseTotalSupplies
 		if dataStruct.Supply[i].Denom == "uluna" {
 			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUluna != nil {
-				return reponseEnRetour, errors.New("failed go convert 'uluna' amount in 'lunc'")
+				return reponseEnRetour, errors.New("[lcd] failed go convert 'uluna' amount in 'lunc'")
 			}
 			LUNCtotalSupply = uluna / 1000000
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
 			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUusd != nil {
-				return reponseEnRetour, errors.New("failed go convert 'uusd' amount in 'ustc'")
+				return reponseEnRetour, errors.New("[lcd] failed go convert 'uusd' amount in 'ustc'")
 			}
 			USTCtotalSupply = uusd / 1000000
 		}

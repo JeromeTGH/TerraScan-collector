@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/JeromeTGH/TerraScan-collector/application"
-	"github.com/JeromeTGH/TerraScan-collector/dataloader"
+	"github.com/JeromeTGH/TerraScan-collector/config"
+	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader"
 )
 
 // Variables globales
-var appConfig application.Config
+var appConfig config.Config
 
 func main() {
 
 	// Chargement des données de configuration, dans la variable "appConfig"
-	application.LoadConfig(&appConfig)
+	config.LoadConfig(&appConfig)
 
 	// Chargement des données, en faisant appel au LCD (on passe la config dans la foulée, pour transmettre l'URL du LCD, stocké dedans)
 	dataFromLcd, errFromLcd := dataloader.LoadTotalSupplies(&appConfig)
@@ -26,6 +26,5 @@ func main() {
 	// Afichage dans la console (debug)
 	fmt.Printf("LUNCtotalSupply = %f\n", dataFromLcd.LuncTotalSupply)
 	fmt.Printf("USTCtotalSupply = %f\n", dataFromLcd.UstcTotalSupply)
-	
 
 }
