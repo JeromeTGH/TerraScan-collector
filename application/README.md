@@ -8,6 +8,8 @@ Content :
 ---
 lcd:
   url: xxxxxx
+  nbTentativesSiEchec: 5
+  nbMinutesDePauseEntreTentatives: 5
 bdd:
   host_name: xxxxxx
   bdd_name: xxxxxx

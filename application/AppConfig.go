@@ -12,6 +12,8 @@ const configDataFile = "application/private/private.yaml"
 type Config struct {
 	Lcd struct {
 		Url string `yaml:"url"`
+		NbTentativesSiEchec uint8 `yaml:"nbTentativesSiEchec"`
+		NbMinutesDePauseEntreTentatives uint8 `yaml:"nbMinutesDePauseEntreTentatives"`
 	}
 	Bdd struct {
 		HostName string `yaml:"host_name"`
@@ -22,7 +24,7 @@ type Config struct {
 	}
 	Email struct {
 		HostName string `yaml:"host_name"`
-		SmtpPort int16 `yaml:"smtp_port"`
+		SmtpPort  uint16 `yaml:"smtp_port"`
 		From      string `yaml:"from"`
 		Pwd       string `yaml:"pwd"`
 		To        string `yaml:"to"`

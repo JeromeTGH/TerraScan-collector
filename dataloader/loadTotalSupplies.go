@@ -12,20 +12,20 @@ import (
 
 func LoadTotalSupplies(appConfig *application.Config) (lcd.StructReponseTotalSupplies, error) {
 
-	const nbMaxTentatives = 5						// Par défaut, on essaye 5 fois, puis on arrête
-	const nbMinutesDePauseEntreChaqueEssai = 5		// avec une pause de 5 minutes par défaut, entre chaque essai
+	// appConfig.Lcd.NbTentativesSiEchec :   				par défaut = 5 		(donc on essaye cinq fois maximum, puis on arrête)
+	// appConfig.Lcd.NbMinutesDePauseEntreTentatives :		par défaut = 5 		(donc 5 minutes de pause, entre chaque tentative infructueuse)
 
 	var idxTentatitves uint8
 
-	for idxTentatitves = 1 ; idxTentatitves <= nbMaxTentatives ; idxTentatitves++ {
+	for idxTentatitves = 1 ; idxTentatitves <= appConfig.Lcd.NbTentativesSiEchec ; idxTentatitves++ {
 		totalSupplies, errGetTotalSupplies := lcd.GetTotalSupplies(appConfig)
 		if errGetTotalSupplies == nil {
 			return totalSupplies, nil
 		} else {
-			fmt.Println("[LoadTotalSupplies] Échec tentative", idxTentatitves, "/", nbMaxTentatives)
+			fmt.Println("[LoadTotalSupplies] Échec tentative", idxTentatitves, "/", appConfig.Lcd.NbTentativesSiEchec)
 			fmt.Println(errGetTotalSupplies.Error())
 			// Pause de X minutes, avant de retenter
-			time.Sleep(nbMinutesDePauseEntreChaqueEssai * time.Minute)
+			time.Sleep(time.Duration(appConfig.Lcd.NbMinutesDePauseEntreTentatives) * time.Minute)
 		}
 	}
 
