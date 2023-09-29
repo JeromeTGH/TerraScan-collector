@@ -1,15 +1,16 @@
-## Hidden : "private" directory and "private/private.yaml" file, in "application" folder
+## Hidden (need to create) : "private" directory and "private/private.yaml" file, in "config" folder
 
-Path : ***/application/private/private.yaml***
+Path = ***/config/private/private.yaml***
 
-Content :
+Content =
 
 ```yaml
 ---
 lcd:
   url: xxxxxx
-  nbTentativesSiEchec: 5
-  nbMinutesDePauseEntreTentatives: 5
+  get_timeout_in_seconds: 30
+  nb_of_attempts_if_failure: 5
+  nb_minutes_of_break_between_attempts: 5
 bdd:
   host_name: xxxxxx
   bdd_name: xxxxxx
