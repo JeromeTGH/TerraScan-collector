@@ -6,12 +6,16 @@ import (
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader"
+	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
 )
 
 // Variables globales
 var appConfig config.Config
 
 func main() {
+
+	// Inscription du démarrage (appel de ce script), dans le log
+	logger.WriteLog("main", "Script called")
 
 	// Chargement des données de configuration, dans la variable "appConfig"
 	config.LoadConfig(&appConfig)
