@@ -32,7 +32,9 @@ type Config struct {
 	}
 }
 
-func LoadConfig(appConfig *Config) {
+var AppConfig *Config
+
+func LoadConfig() {
 
 	// Teste la présence du fichier de configuration
 	_, errStat := os.Stat(configDataFile)
@@ -60,7 +62,7 @@ func LoadConfig(appConfig *Config) {
 	}
 
 	// Parse le fichier lu, pour le mettre dans la structure de config
-	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &appConfig)
+	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &AppConfig)
 	if errYamlUnmarshal != nil {
 		logger.WriteLog("config", "failed to unmarshal config data")
 		panic(errYamlUnmarshal)

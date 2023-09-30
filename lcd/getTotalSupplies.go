@@ -27,12 +27,12 @@ type totalSuppliesLcdStructure struct {
 }
 
 type StructReponseTotalSupplies struct {
-	LuncTotalSupply float64
-	UstcTotalSupply float64
+	LuncTotalSupply int
+	UstcTotalSupply int
 }
 
 
-func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, string) {
+func GetTotalSupplies() (StructReponseTotalSupplies, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseTotalSupplies
@@ -41,11 +41,11 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, str
 	var path = "/cosmos/bank/v1beta1/supply?pagination.limit=9999"
 
 	// Récupération de l'url du LCD
-	var LCDurl = appConfig.Lcd.Url
+	var LCDurl = config.AppConfig.Lcd.Url
 
 	// Création d'un client HTTP (avec timeout fixé à 30 secondes)
 	client := &http.Client{
-        Timeout: time.Duration(appConfig.Lcd.GetTimeoutInSeconds) * time.Second,
+        Timeout: time.Duration(config.AppConfig.Lcd.GetTimeoutInSeconds) * time.Second,
     }
 
 	// Lancement du GET
@@ -73,18 +73,18 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, str
 	}
 
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
-	var LUNCtotalSupply float64 = -1
-	var USTCtotalSupply float64 = -1
+	var LUNCtotalSupply int = -1
+	var USTCtotalSupply int = -1
 	for i:=0 ; i<len(dataStruct.Supply) ; i++ {
 		if dataStruct.Supply[i].Denom == "uluna" {
-			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
+			uluna, errUluna := strconv.Atoi(dataStruct.Supply[i].Amount)
 			if errUluna != nil {
 				return reponseEnRetour, "failed go convert 'uluna' amount in 'lunc' from LCD"
 			}
 			LUNCtotalSupply = uluna / 1000000
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
-			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
+			uusd, errUusd := strconv.Atoi(dataStruct.Supply[i].Amount)
 			if errUusd != nil {
 				return reponseEnRetour, "failed go convert 'uusd' amount in 'ustc' from LCD"
 			}
