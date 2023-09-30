@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -17,6 +18,10 @@ func WriteLog(prefix string, textToAppend string) {
 	// Écriture d'une nouvelle ligne
 	logger := log.New(logFile, "[" + prefix + "] ", log.LstdFlags)
 	logger.Println(textToAppend)
+	// Nota : exemple de ligne écrite :
+	//         [main] 2023/09/30 15:12:02 Script called
 
-	// Nota : exemple de ligne écrite .... =         [main] 2023/09/30 15:12:02 Script called
+	// Et écriture dans la console aussi
+	fmt.Println("[" + prefix + "] " + textToAppend)
+	
 }

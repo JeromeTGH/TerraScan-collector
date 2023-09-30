@@ -2,7 +2,6 @@ package lcd
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -33,7 +32,7 @@ type StructReponseTotalSupplies struct {
 }
 
 
-func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, error) {
+func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseTotalSupplies
@@ -52,13 +51,13 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, err
 	// Lancement du GET
 	reponse, errGet := client.Get(LCDurl + path)
 	if errGet != nil {
-		return reponseEnRetour, errors.New("[lcd] failed go fetch 'total supplies' on LCD")
+		return reponseEnRetour, "failed go fetch 'total supplies' from LCD"
 	}
 
 	// Lecture de la réponse du GET
 	body, errReadAll := io.ReadAll(reponse.Body)
 	if errReadAll != nil {
-		return reponseEnRetour, errors.New("[lcd] failed go read 'total supplies' answer, from LCD")
+		return reponseEnRetour, "failed go read 'total supplies' answer from LCD"
 	}
 
 	// Transformation byte[] -> string pour avoir du contenu JSON "en clair"
@@ -70,7 +69,7 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, err
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, errors.New("[lcd] an error was returned by LCD, while fetching 'total supplies'")
+		return reponseEnRetour, "an error was returned while fetching 'total supplies' from LCD"
 	}
 
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
@@ -80,14 +79,14 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, err
 		if dataStruct.Supply[i].Denom == "uluna" {
 			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUluna != nil {
-				return reponseEnRetour, errors.New("[lcd] failed go convert 'uluna' amount in 'lunc'")
+				return reponseEnRetour, "failed go convert 'uluna' amount in 'lunc' from LCD"
 			}
 			LUNCtotalSupply = uluna / 1000000
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
 			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUusd != nil {
-				return reponseEnRetour, errors.New("[lcd] failed go convert 'uusd' amount in 'ustc'")
+				return reponseEnRetour, "failed go convert 'uusd' amount in 'ustc' from LCD"
 			}
 			USTCtotalSupply = uusd / 1000000
 		}
@@ -96,6 +95,6 @@ func GetTotalSupplies(appConfig *config.Config) (StructReponseTotalSupplies, err
 	// Et renvoi à l'appeleur
 	reponseEnRetour.LuncTotalSupply = LUNCtotalSupply
 	reponseEnRetour.UstcTotalSupply = USTCtotalSupply
-	return reponseEnRetour, nil
+	return reponseEnRetour, ""
 
 }

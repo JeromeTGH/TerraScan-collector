@@ -15,15 +15,15 @@ var appConfig config.Config
 func main() {
 
 	// Inscription du démarrage (appel de ce script), dans le log
-	logger.WriteLog("main", "Script called")
+	logger.WriteLog("main", "script called")
 
 	// Chargement des données de configuration, dans la variable "appConfig"
 	config.LoadConfig(&appConfig)
 
 	// Chargement des données, en faisant appel au LCD (on passe la config dans la foulée, pour transmettre l'URL du LCD, stocké dedans)
 	dataFromLcd, errFromLcd := dataloader.LoadTotalSupplies(&appConfig)
-	if errFromLcd != nil {
-		fmt.Println(errFromLcd)
+	if errFromLcd != "" {
+		logger.WriteLog("main", errFromLcd)
 		os.Exit(500)
 	}
 
