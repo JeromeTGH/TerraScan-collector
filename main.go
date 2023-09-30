@@ -19,7 +19,7 @@ func main() {
 	config.LoadConfig()
 
 
-	// mailsender.Sendmail("App Go", "<p><strong>Test titre</strong></p><br /><p>Texte <u>à voir</u> ici.</p>")
+	// mailsender.Sendmail("App Go", "<p><strong>Test titre</strong></p><p>Texte <u>à voir</u> ici.</p>")
 
 
 	// Chargement des données, en faisant appel au LCD
