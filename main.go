@@ -18,6 +18,10 @@ func main() {
 	// Chargement des données de configuration, dans la variable "AppConfig"
 	config.LoadConfig()
 
+
+	// mailsender.Sendmail("App Go", "<p><strong>Test titre</strong></p><br /><p>Texte <u>à voir</u> ici.</p>")
+
+
 	// Chargement des données, en faisant appel au LCD
 	dataFromLcd, errFromLcd := dataloader.LoadTotalSupplies()
 	if errFromLcd != "" {
