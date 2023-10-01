@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader"
+	"github.com/JeromeTGH/TerraScan-collector/utils/dbwriter"
 	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
 )
 
@@ -19,14 +17,9 @@ func main() {
 	logger.WriteLogWithoutPrinting("main", "script called")
 
 	// Chargement des données, en faisant appel au LCD
-	dataFromLcd, errFromLcd := dataloader.LoadTotalSupplies()
-	if errFromLcd != "" {
-		logger.WriteLog("main", errFromLcd)
-		os.Exit(500)
-	}
+	dataFromLcd := dataloader.LoadTotalSupplies()
 
-	// Afichage dans la console (debug)
-	fmt.Printf("LUNCtotalSupply = %d\n", dataFromLcd.LuncTotalSupply)
-	fmt.Printf("USTCtotalSupply = %d\n", dataFromLcd.UstcTotalSupply)
+	// Écriture en base de données
+	dbwriter.WriteTotalSuppliesInDb(dataFromLcd)
 
 }
