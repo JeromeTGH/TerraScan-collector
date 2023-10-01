@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
@@ -34,6 +35,15 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
+
+	// Effacement de la table
+	rqtZero := "DROP TABLE IF EXISTS tblTotalSupplies2"
+	_, errZero := db.ExecContext(context.Background(), rqtZero)
+	if errZero != nil {  
+		fmt.Printf("Error %s when dropping table", errZero)
+		return
+	}
+
 	// Construction de la requête
 	rqt := "INSERT INTO tblTotalSupplies2 VALUES ("
 	rqt += "null,"
@@ -46,22 +56,72 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 	rqt += "?,"		// bM1
 	rqt += "?,"		// bY1
 	rqt += "?,"		// luncAmount
-	rqt += "?)"		// uusdAmount
+	rqt += "?)"		// ustcAmount
 
 
 	// Exécution de la requête
-	insertResult, err2 := db.ExecContext(context.Background(), rqt, "code", "datetimeUTC", true, false, false, false, false, false, 12, 13)
+	var bCreateTableNeeded = false
+	insertResult, err2 := db.ExecContext(context.Background(), rqt, "code", "datetimeUTC", true, false, false, false, false, false, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)
 	if err2 != nil {
-		fmt.Printf("insert failed : %s", err2)
-		return
+		if strings.Contains(err2.Error(), "doesn't exist") {
+			bCreateTableNeeded = true
+		} else {
+			fmt.Printf("insert failed : %s", err2)
+			return
+		}
 	}
 
-	// Récupération du dernier ID inséré
-	id, err3 := insertResult.LastInsertId()
-	if err3 != nil {
-		fmt.Printf("impossible to retrieve last inserted id: %s", err3)
-		return
+	// Si la table visée n'existe pas, on l'a créé
+	if bCreateTableNeeded {
+
+		// Construction de la requête
+		rqt2 := "CREATE TABLE IF NOT EXISTS tblTotalSupplies2 ("
+		rqt2 += "enregNumber INT AUTO_INCREMENT PRIMARY KEY,"
+		rqt2 += "code VARCHAR(12) UNIQUE,"
+		rqt2 += "datetimeUTC DATETIME,"
+		rqt2 += "bH1 BOOLEAN NOT NULL DEFAULT TRUE,"
+		rqt2 += "bH4 BOOLEAN NOT NULL DEFAULT FALSE,"
+		rqt2 += "bD1 BOOLEAN NOT NULL DEFAULT FALSE,"
+		rqt2 += "bW1 BOOLEAN NOT NULL DEFAULT FALSE,"
+		rqt2 += "bM1 BOOLEAN NOT NULL DEFAULT FALSE,"
+		rqt2 += "bY1 BOOLEAN NOT NULL DEFAULT FALSE,"
+		rqt2 += "luncAmount BIGINT,"
+		rqt2 += "ustcAmount BIGINT"
+		rqt2 += ");"
+
+		_, err2b := db.ExecContext(context.Background(), rqt2)  
+		if err2b != nil {  
+			fmt.Printf("Error %s when creating table", err2b)
+			return
+		}
+
+		insertResult2, err2c := db.ExecContext(context.Background(), rqt, "code", "datetimeUTC", true, false, false, false, false, false, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)
+		if err2c != nil {
+			fmt.Printf("insert failed : %s", err2c)
+			return
+		}
+
+		// Récupération du dernier ID inséré
+		id, err2d := insertResult2.LastInsertId()
+		if err2d != nil {
+			fmt.Printf("impossible to retrieve last inserted id: %s", err2d)
+			return
+		}
+		fmt.Printf("inserted id: %d", id)
+
+
+	} else {
+
+		// Récupération du dernier ID inséré
+		id, err3 := insertResult.LastInsertId()
+		if err3 != nil {
+			fmt.Printf("impossible to retrieve last inserted id: %s", err3)
+			return
+		}
+		fmt.Printf("inserted id: %d", id)
+
 	}
-	fmt.Printf("inserted id: %d", id)
+
+
 
 }
