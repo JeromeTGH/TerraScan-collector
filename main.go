@@ -12,15 +12,11 @@ import (
 
 func main() {
 
-	// Inscription du démarrage (appel de ce script), dans le log
-	logger.WriteLogWithoutPrinting("main", "script called")
-
 	// Chargement des données de configuration, dans la variable "AppConfig"
 	config.LoadConfig()
-
-
-	// mailsender.Sendmail("App Go", "<p><strong>Test titre</strong></p><p>Texte <u>à voir</u> ici.</p>")
-
+	
+	// Inscription dans le log de l'appel de ce script
+	logger.WriteLogWithoutPrinting("main", "script called")
 
 	// Chargement des données, en faisant appel au LCD
 	dataFromLcd, errFromLcd := dataloader.LoadTotalSupplies()
