@@ -18,7 +18,7 @@ type Config struct {
 	}
 	Bdd struct {
 		HostName  string `yaml:"host_name"`
-		BddName   string `yaml:"bdd_name"`
+		DbName    string `yaml:"db_name"`
 		UserName  string `yaml:"user_name"`
 		Password  string `yaml:"password"`
 		Port      int `yaml:"port"`
