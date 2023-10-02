@@ -7,7 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func CreateTotalSuppliesTable() {
+func CreateTotalSuppliesTable() error {
 
 	// Construction de la requête
 	rqt := "CREATE TABLE IF NOT EXISTS tblTotalSupplies2 ("
@@ -25,11 +25,12 @@ func CreateTotalSuppliesTable() {
 	rqt += ");"
 
 	// Exécution de la requête
-	errExec := db.Exec(rqt)	
+	errExec := db.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
 		fmt.Println(errExec)
+		return errExec
 	}
 
-	// fmt.Println("Table créée")
+	return nil
 
 }

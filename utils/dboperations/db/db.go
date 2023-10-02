@@ -19,7 +19,7 @@ func dsn() string {
 }
 
 
-func Exec (rqt string) error {
+func ExecCreateOrDrop (rqt string) error {
 
 	db, errOpen := sql.Open("mysql", dsn())
 	if errOpen != nil {
@@ -40,31 +40,7 @@ func Exec (rqt string) error {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // Effacement de la table
-// rqtZero := "DROP TABLE IF EXISTS tblTotalSupplies2"
-// _, errZero := db.ExecContext(context.Background(), rqtZero)
-// if errZero != nil {  
-// 	fmt.Printf("Error %s when dropping table", errZero)
-// 	return
-// }
-
-func InsertIntoDb (rqt string, args ...interface{}) (int, error) {
+func ExecInsert (rqt string, args ...interface{}) (int, error) {
 
 	db, errOpen := sql.Open("mysql", dsn())
 	if errOpen != nil {
@@ -93,41 +69,6 @@ func InsertIntoDb (rqt string, args ...interface{}) (int, error) {
 		return -1, errLastInsertId
 	}
 
-	fmt.Printf("Values added ! LastInsertId = %d\n", lastInsertId)
+	// fmt.Printf("Values added ! LastInsertId = %d\n", lastInsertId)
 	return int(lastInsertId), nil
 }
-
-
-func CreateTableInDb (rqt string) (int, error) {
-
-	db, errOpen := sql.Open("mysql", dsn())
-	if errOpen != nil {
-		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
-		return -1, errOpen
-    }
-	defer db.Close()
-
-	insert, errPrepare := db.Prepare(rqt)
-	if errPrepare != nil {
-		fmt.Printf("failed to prepare rqt : %s\n", errPrepare)
-		return -1, errPrepare
-	}
-
-	resp, errExec := insert.Exec()
-	insert.Close()
-
-	if errExec != nil {
-		fmt.Printf("failed to execute rqt : %s\n", errExec)
-		return -1, errExec
-	}
-
-	lastInsertId, errLastInsertId := resp.LastInsertId()
-	if errLastInsertId != nil {
-		fmt.Printf("failed to fetch LastInsertId : %s\n", errLastInsertId)
-		return -1, errLastInsertId
-	}
-
-	fmt.Printf("Values added ! LastInsertId = %d\n", lastInsertId)
-	return int(lastInsertId), nil
-}
-

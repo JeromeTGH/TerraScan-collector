@@ -7,17 +7,18 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func DropTotalSuppliesTable() {
+func DropTotalSuppliesTable() error {
 
 	// Construction de la requête
 	rqt := "DROP TABLE IF EXISTS tblTotalSupplies2"
 
 	// Exécution de la requête
-	errExec := db.Exec(rqt)	
+	errExec := db.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
 		fmt.Println(errExec)
+		return errExec
 	}
 
-	// fmt.Println("Table effacée")
+	return nil
 
 }
