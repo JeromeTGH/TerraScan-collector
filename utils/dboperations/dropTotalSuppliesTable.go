@@ -13,12 +13,11 @@ func DropTotalSuppliesTable() {
 	rqt := "DROP TABLE IF EXISTS tblTotalSupplies2"
 
 	// Exécution de la requête
-	errDropTable := db.Exec(rqt)	
-	if errDropTable != nil {
-		fmt.Println(errDropTable)
+	errExec := db.Exec(rqt)	
+	if errExec != nil {
+		fmt.Println(errExec)
 	}
 
-	fmt.Println("Table effacée")
-
+	// fmt.Println("Table effacée")
 
 }

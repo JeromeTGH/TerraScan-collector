@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader"
 	"github.com/JeromeTGH/TerraScan-collector/utils/dboperations"
@@ -23,7 +21,6 @@ func main() {
 
 	// Écriture en base de données
 	dboperations.DropTotalSuppliesTable()
-	fmt.Println(dataFromLcd)
-	// dboperations.WriteTotalSuppliesInDb(dataFromLcd)
+	dboperations.WriteTotalSuppliesInDb(dataFromLcd)
 
 }
