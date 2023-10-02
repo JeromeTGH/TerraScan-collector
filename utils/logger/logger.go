@@ -26,8 +26,8 @@ func WriteLogWithoutPrinting(prefix string, textToAppend string) {
 	defer logFile.Close()
 
 	// Écriture d'une nouvelle ligne
-	logger := log.New(logFile, "[" + prefix + "] ", log.LstdFlags)
-	logger.Println(textToAppend)
+	logger := log.New(logFile, "", log.LstdFlags)
+	logger.Println("[" + prefix + "] " + textToAppend)
 	// Nota : exemple de ligne écrite :
 	//         [main] 2023/09/30 15:12:02 Script called
 	

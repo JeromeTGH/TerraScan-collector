@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JeromeTGH/TerraScan-collector/utils/dboperations/db"
+	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -15,7 +16,8 @@ func DropTotalSuppliesTable() error {
 	// Exécution de la requête
 	errExec := db.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
-		fmt.Println(errExec)
+		stringToReturn := fmt.Sprintf("DropTotalSuppliesTable : failed (%s)", errExec.Error())
+		logger.WriteLog("dboperations", stringToReturn)
 		return errExec
 	}
 

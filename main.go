@@ -20,7 +20,7 @@ func main() {
 	dataFromLcd := dataloader.LoadTotalSupplies()
 
 	// Écriture en base de données
-	dboperations.DropTotalSuppliesTable()
+	// dboperations.DropTotalSuppliesTable()
 	dboperations.WriteTotalSuppliesInDb(dataFromLcd)
 
 }

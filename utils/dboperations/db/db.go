@@ -23,7 +23,7 @@ func ExecCreateOrDrop (rqt string) error {
 
 	db, errOpen := sql.Open("mysql", dsn())
 	if errOpen != nil {
-		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
+		// fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
 		return errOpen
     }
 	defer db.Close()
@@ -31,7 +31,7 @@ func ExecCreateOrDrop (rqt string) error {
 	_, errExec := db.Exec(rqt)
 
 	if errExec != nil {
-		fmt.Printf("failed to execute rqt : %s\n", errExec)
+		// fmt.Printf("failed to execute rqt : %s\n", errExec)
 		return errExec
 	}
 
@@ -44,14 +44,14 @@ func ExecInsert (rqt string, args ...interface{}) (int, error) {
 
 	db, errOpen := sql.Open("mysql", dsn())
 	if errOpen != nil {
-		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
+		// fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
 		return -1, errOpen
     }
 	defer db.Close()
 
 	insert, errPrepare := db.Prepare(rqt)
 	if errPrepare != nil {
-		fmt.Printf("failed to prepare rqt : %s\n", errPrepare)
+		// fmt.Printf("failed to prepare rqt : %s\n", errPrepare)
 		return -1, errPrepare
 	}
 
@@ -59,13 +59,13 @@ func ExecInsert (rqt string, args ...interface{}) (int, error) {
 	insert.Close()
 
 	if errExec != nil {
-		fmt.Printf("failed to execute rqt : %s\n", errExec)
+		// fmt.Printf("failed to execute rqt : %s\n", errExec)
 		return -1, errExec
 	}
 
 	lastInsertId, errLastInsertId := resp.LastInsertId()
 	if errLastInsertId != nil {
-		fmt.Printf("failed to fetch LastInsertId : %s\n", errLastInsertId)
+		// fmt.Printf("failed to fetch LastInsertId : %s\n", errLastInsertId)
 		return -1, errLastInsertId
 	}
 
