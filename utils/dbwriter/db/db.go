@@ -8,18 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type InsertParams struct {
-	Code string
-	DateUTCpourMysql string
-	BH1 bool
-	BH4 bool
-	BD1 bool
-	BW1 bool
-	BM1 bool
-	BY1 bool
-	LuncTotalSupply int
-	UstcTotalSupply int
-}
 
 func dsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
@@ -38,35 +26,70 @@ func dsn() string {
 // 	return
 // }
 
-func InsertIntoDb (rqt string, params InsertParams) {
+func InsertIntoDb (rqt string, args ...interface{}) (int, error) {
 
 	db, errOpen := sql.Open("mysql", dsn())
 	if errOpen != nil {
-		fmt.Printf("failed to create connection with mysql server : %s", errOpen)
-		return
+		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
+		return -1, errOpen
     }
 	defer db.Close()
 
 	insert, errPrepare := db.Prepare(rqt)
 	if errPrepare != nil {
-		fmt.Printf("failed to prepare rqt : %s", errPrepare)
-		return
+		fmt.Printf("failed to prepare rqt : %s\n", errPrepare)
+		return -1, errPrepare
 	}
 
-	resp, errExec := insert.Exec(params.Code, params.DateUTCpourMysql, params.BH1, params.BH4, params.BD1, params.BW1, params.BM1, params.BY1, params.LuncTotalSupply, params.UstcTotalSupply)
+	resp, errExec := insert.Exec(args...)
 	insert.Close()
 
 	if errExec != nil {
-		fmt.Printf("failed to execute rqt : %s", errExec)
-		return
+		fmt.Printf("failed to execute rqt : %s\n", errExec)
+		return -1, errExec
 	}
 
 	lastInsertId, errLastInsertId := resp.LastInsertId()
 	if errLastInsertId != nil {
-		fmt.Printf("failed to fetch LastInsertId : %s", errLastInsertId)
-		return
+		fmt.Printf("failed to fetch LastInsertId : %s\n", errLastInsertId)
+		return -1, errLastInsertId
 	}
 
-	fmt.Printf("Values added ! LastInsertId = %d", lastInsertId)
+	fmt.Printf("Values added ! LastInsertId = %d\n", lastInsertId)
+	return int(lastInsertId), nil
+}
+
+
+func CreateTableInDb (rqt string) (int, error) {
+
+	db, errOpen := sql.Open("mysql", dsn())
+	if errOpen != nil {
+		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
+		return -1, errOpen
+    }
+	defer db.Close()
+
+	insert, errPrepare := db.Prepare(rqt)
+	if errPrepare != nil {
+		fmt.Printf("failed to prepare rqt : %s\n", errPrepare)
+		return -1, errPrepare
+	}
+
+	resp, errExec := insert.Exec()
+	insert.Close()
+
+	if errExec != nil {
+		fmt.Printf("failed to execute rqt : %s\n", errExec)
+		return -1, errExec
+	}
+
+	lastInsertId, errLastInsertId := resp.LastInsertId()
+	if errLastInsertId != nil {
+		fmt.Printf("failed to fetch LastInsertId : %s\n", errLastInsertId)
+		return -1, errLastInsertId
+	}
+
+	fmt.Printf("Values added ! LastInsertId = %d\n", lastInsertId)
+	return int(lastInsertId), nil
 }
 
