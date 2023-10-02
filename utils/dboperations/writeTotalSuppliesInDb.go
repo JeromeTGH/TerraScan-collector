@@ -1,4 +1,4 @@
-package dbwriter
+package dboperations
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/utils/dbwriter/db"
+	"github.com/JeromeTGH/TerraScan-collector/utils/dboperations/db"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -38,7 +38,6 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 
 	// Construction de la requête
 	rqt := "INSERT INTO tblTotalSupplies2 VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-
 
 	// Exécution de la requête
 	var bCreateTableNeeded = false

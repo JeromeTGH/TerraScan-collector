@@ -18,6 +18,44 @@ func dsn() string {
 		config.AppConfig.Bdd.DbName)
 }
 
+
+func Exec (rqt string) error {
+
+	db, errOpen := sql.Open("mysql", dsn())
+	if errOpen != nil {
+		fmt.Printf("failed to create connection with mysql server : %s\n", errOpen)
+		return errOpen
+    }
+	defer db.Close()
+
+	_, errExec := db.Exec(rqt)
+
+	if errExec != nil {
+		fmt.Printf("failed to execute rqt : %s\n", errExec)
+		return errExec
+	}
+
+	return nil
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // // Effacement de la table
 // rqtZero := "DROP TABLE IF EXISTS tblTotalSupplies2"
 // _, errZero := db.ExecContext(context.Background(), rqtZero)
