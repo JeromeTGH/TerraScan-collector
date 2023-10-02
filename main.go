@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/JeromeTGH/TerraScan-collector/config"
-	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader"
-	"github.com/JeromeTGH/TerraScan-collector/utils/dboperations"
-	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
+	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
 
@@ -20,7 +20,6 @@ func main() {
 	dataFromLcd := dataloader.LoadTotalSupplies()
 
 	// Écriture en base de données
-	// dboperations.DropTotalSuppliesTable()
 	dboperations.WriteTotalSuppliesInDb(dataFromLcd)
 
 }

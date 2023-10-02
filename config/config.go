@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
+	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	"gopkg.in/yaml.v3"
 )
 

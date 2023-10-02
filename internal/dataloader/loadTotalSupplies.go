@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
-	"github.com/JeromeTGH/TerraScan-collector/utils/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
-	"github.com/JeromeTGH/TerraScan-collector/utils/mailsender"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
+	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
+	"github.com/JeromeTGH/TerraScan-collector/internal/mailsender"
 )
 
 

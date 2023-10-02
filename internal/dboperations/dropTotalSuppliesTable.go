@@ -3,8 +3,8 @@ package dboperations
 import (
 	"fmt"
 
-	"github.com/JeromeTGH/TerraScan-collector/utils/dboperations/db"
-	"github.com/JeromeTGH/TerraScan-collector/utils/logger"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
+	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
