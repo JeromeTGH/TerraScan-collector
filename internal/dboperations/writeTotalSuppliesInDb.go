@@ -48,7 +48,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 			bCreateTableNeeded = true
 		} else {
 			// Autre erreur, on quitte cette fonction
-			mailsender.Sendmail("[TerraScan-collector] impossible to insert data in DB", "<p><strong>Impossible to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>")
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>")
 			return
 		}
 	}
@@ -60,7 +60,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 		if errCreation != nil {
 			stringToReturn2 := fmt.Sprintf("WriteTotalSuppliesInDb : failed (%s)", errCreation.Error())
 			logger.WriteLog("dboperations", stringToReturn2)
-			mailsender.Sendmail("[TerraScan-collector] impossible to create table in DB", "<p><strong>Impossible to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>")
+			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>Failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>")
 			return
 		}
 		stringToReturn3 := "WriteTotalSuppliesInDb : new table created successfully"
@@ -72,7 +72,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 		if errInsert2 != nil {
 			stringToReturn4 := fmt.Sprintf("WriteTotalSuppliesInDb : failed (%s)", errInsert2.Error())
 			logger.WriteLog("dboperations", stringToReturn4)
-			mailsender.Sendmail("[TerraScan-collector] impossible to insert data in DB", "<p><strong>Impossible to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>")
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>")
 			return
 		}
 

@@ -13,7 +13,7 @@ lcd:
   nb_minutes_of_break_between_attempts: 5
 bdd:
   host_name: xxxxxx
-  bdd_name: xxxxxx
+  db_name: xxxxxx
   user_name: xxxxxx
   password: xxxxxx
   port: 3306
