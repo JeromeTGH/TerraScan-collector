@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const configDataFile = "config/private/private.yaml"
+const configDataFile = "./config/private/private.yaml"
 
 type Config struct {
 	Lcd struct {
