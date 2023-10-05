@@ -24,7 +24,9 @@ func LoadTotalSupplies() (lcd.StructReponseTotalSupplies) {
 		totalSupplies, errGetTotalSupplies := lcd.GetTotalSupplies()
 		if errGetTotalSupplies == "" {
 			if idxTentatitves > 1 {
-				mailsender.Sendmail("[TerraScan-collector] " + strconv.Itoa(idxTentatitves) + " attemps to get data from LCD", "<p><strong>LoadTotalSupplies</strong></p><p>" + strconv.Itoa(idxTentatitves) + " attemps to get data from LCD</p>")
+				stringToReturn4 := fmt.Sprintf("LoadTotalSupplies : success of attempt %d/%d", idxTentatitves, config.AppConfig.Lcd.NbOfAttemptsIfFailure)
+				logger.WriteLog("dataloader", stringToReturn4)
+				mailsender.Sendmail("[TerraScan-collector] " + strconv.Itoa(idxTentatitves) + " attempts to get data from LCD successfully", "<p><strong>LoadTotalSupplies</strong></p><p>Script did " + strconv.Itoa(idxTentatitves) + " attempts to get data from LCD successfully</p>")
 			}
 			return totalSupplies
 		} else {
@@ -39,7 +41,7 @@ func LoadTotalSupplies() (lcd.StructReponseTotalSupplies) {
 		}
 	}
 
-	mailsender.Sendmail("[TerraScan-collector] impossible to load datas from LCD", "<p><strong>Impossible to load datas from LCD</strong></p><p>" + strconv.Itoa(config.AppConfig.Lcd.NbOfAttemptsIfFailure) + " attemps, and no success</p>")
+	mailsender.Sendmail("[TerraScan-collector] impossible to load datas from LCD", "<p><strong>Impossible to load datas from LCD</strong></p><p>" + strconv.Itoa(config.AppConfig.Lcd.NbOfAttemptsIfFailure) + " attempts, and no success</p>")
 
 	stringToReturn3 := fmt.Sprintf("LoadTotalSupplies : impossible to load datas from LCD, even after %d attempts", config.AppConfig.Lcd.NbOfAttemptsIfFailure)
 	logger.WriteLog("dataloader", stringToReturn3)
