@@ -2,12 +2,14 @@ package lcd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
+	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
 
@@ -51,13 +53,13 @@ func GetTotalSupplies() (StructReponseTotalSupplies, string) {
 	// Lancement du GET
 	reponse, errGet := client.Get(LCDurl + path)
 	if errGet != nil {
-		return reponseEnRetour, "failed go fetch 'total supplies' from LCD"
+		return reponseEnRetour, "failed to fetch 'total supplies' from LCD"
 	}
 
 	// Lecture de la réponse du GET
 	body, errReadAll := io.ReadAll(reponse.Body)
 	if errReadAll != nil {
-		return reponseEnRetour, "failed go read 'total supplies' answer from LCD"
+		return reponseEnRetour, "failed to read 'total supplies' answer from LCD"
 	}
 
 	// Transformation byte[] -> string pour avoir du contenu JSON "en clair"
@@ -79,17 +81,24 @@ func GetTotalSupplies() (StructReponseTotalSupplies, string) {
 		if dataStruct.Supply[i].Denom == "uluna" {
 			uluna, errUluna := strconv.Atoi(dataStruct.Supply[i].Amount)
 			if errUluna != nil {
-				return reponseEnRetour, "failed go convert 'uluna' amount in 'lunc' from LCD"
+				return reponseEnRetour, "failed to convert 'uluna' amount in 'lunc' from LCD"
 			}
 			LUNCtotalSupply = uluna / 1000000
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
 			uusd, errUusd := strconv.Atoi(dataStruct.Supply[i].Amount)
 			if errUusd != nil {
-				return reponseEnRetour, "failed go convert 'uusd' amount in 'ustc' from LCD"
+				return reponseEnRetour, "failed to convert 'uusd' amount in 'ustc' from LCD"
 			}
 			USTCtotalSupply = uusd / 1000000
 		}
+	}
+
+	// Si jamais les variables "LUNCtotalSupply" et "USTCtotalSupply" n'ont pas été impactées, alors on remonte une erreur
+	if(LUNCtotalSupply == -1 || USTCtotalSupply == -1) {
+		stringToReturn := fmt.Sprintf("GetTotalSupplies : -1 returned by function.\nError = %s", reponseJSON)
+		logger.WriteLog("dataloader", stringToReturn)
+		return reponseEnRetour, "failed to get 'uusd' or 'uluna' amount from LCD (-1 returned)"
 	}
 
 	// Et renvoi à l'appeleur
