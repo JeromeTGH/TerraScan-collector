@@ -11,7 +11,7 @@ import (
 func CreateTotalSuppliesTable() error {
 
 	// Construction de la requête
-	rqt := "CREATE TABLE IF NOT EXISTS tblTotalSupplies2 ("
+	rqt := "CREATE TABLE IF NOT EXISTS tblTotalSupplies ("
 	rqt += "enregNumber INT AUTO_INCREMENT PRIMARY KEY,"
 	rqt += "code VARCHAR(12) UNIQUE,"
 	rqt += "datetimeUTC DATETIME,"

@@ -11,7 +11,7 @@ import (
 func DropTotalSuppliesTable() error {
 
 	// Construction de la requête
-	rqt := "DROP TABLE IF EXISTS tblTotalSupplies2"
+	rqt := "DROP TABLE IF EXISTS tblTotalSupplies"
 
 	// Exécution de la requête
 	errExec := db.ExecCreateOrDrop(rqt)	
