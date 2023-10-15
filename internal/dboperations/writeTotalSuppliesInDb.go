@@ -35,7 +35,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 
 
 	// Construction de la requête
-	rqt := "INSERT INTO tblTotalSupplies VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	rqt := "INSERT INTO tblTotalSupplies3 VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	// Exécution de la requête
 	var bCreateTableNeeded = false

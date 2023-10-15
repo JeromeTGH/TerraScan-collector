@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
@@ -8,18 +10,46 @@ import (
 )
 
 
+
 func main() {
 
 	// Chargement des données de configuration, dans la variable "AppConfig"
 	config.LoadConfig()
 	
-	// Inscription dans le log de l'appel de ce script
+	// Enregistrement des date/heure de démarrage, dans le fichier log
 	logger.WriteLogWithoutPrinting("main", "script called")
 
-	// Chargement des données, en faisant appel au LCD
-	dataFromLcd := dataloader.LoadTotalSupplies()
+	// Lancement asynchrone de fonctions, via des channels
+	channelForTotalSupplies := asyncLoadAndSaveTotalSupplies()
 
-	// Écriture en base de données
-	dboperations.WriteTotalSuppliesInDb(dataFromLcd)
+	// Résultats
+	fmt.Println("Retour 'channelForTotalSupplies' =", <- channelForTotalSupplies)
+
+	// Inscription dans le log de la fin de ce script
+	logger.WriteLogWithoutPrinting("main", "script done")
+	
+
+}
+
+
+
+
+func asyncLoadAndSaveTotalSupplies() chan int {
+
+	// Création d'un channel de retour, pour cette fonction asynchrone
+	r := make(chan int)
+
+	go func() {
+		// Chargement des données, en faisant appel au LCD
+		dataFromLcd := dataloader.LoadTotalSupplies()
+
+		// Écriture en base de données
+		dboperations.WriteTotalSuppliesInDb(dataFromLcd)
+
+		// Et signalement de fin, via le channel de cette fonction
+		r <- 1
+	}()
+
+	return r
 
 }
