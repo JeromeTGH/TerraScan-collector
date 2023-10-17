@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
 	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
@@ -20,39 +17,30 @@ func main() {
 	// Enregistrement des date/heure de démarrage, dans le fichier log
 	logger.WriteLogWithoutPrinting("main", "script started")
 	
-	// Channels de données
-	channelForTotalSupplies := make(chan lcd.StructReponseTotalSupplies)
-	// channelForNbStakedLunc := make(chan float64)
+	// Channels de LOADING data
+	channelForTotalSuppliesLoading := make(chan lcd.StructReponseTotalSupplies)
+	channelForNbStakedLunc := make(chan lcd.StructReponseNbStakedLunc)
+
+	// Channels de SAVING data
+	channelForTotalSuppliesAndStakingPercentageSaving := make(chan bool)
+
+	// Clôture de tous channels à la sortie de cette fonction
+	defer close(channelForTotalSuppliesLoading)
+	defer close(channelForNbStakedLunc)
+	defer close(channelForTotalSuppliesAndStakingPercentageSaving)
 	
 	// Chargement de données auprès du LCD
-	go dataloader.LoadTotalSupplies(channelForTotalSupplies)
-	// go dataloader.LoadNbStakedLunc(&channelForNbStakedLunc, &wg)
+	go dataloader.LoadTotalSupplies(channelForTotalSuppliesLoading)
+	go dataloader.LoadNbStakedLunc(channelForNbStakedLunc)
 
-	// Récupération des données, via les différents channels
-	totalSupplies := <- channelForTotalSupplies
-	// nbStakedLunc := <- channelForNbStakedLunc
+	// Récupération des données via les différents channels, et enregistrement en BDD
+	go dataloader.SaveTotalSuppliesAndStakingPercentage(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingPercentageSaving)
 
-
-	// Enregistrement en base de données
-	if(totalSupplies != lcd.StructReponseTotalSupplies{}) {
-
-		// Enregistrement des total supplies		
-		dboperations.WriteTotalSuppliesInDb(totalSupplies)
-
-		// // Enregistrement du taux de staking
-		// totalSupplyOfLunc := totalSupplies.LuncTotalSupply
-		// nbStakedLunc := <- channelForNbStakedLunc
-		// dboperations.WriteStakingPercentageInDb(nbStakedLunc, totalSupplyOfLunc)
-
-	} else {
-		fmt.Println("Total supplies error")
-	}
+	// Attente que tous les "saving chanels" aient répondu
+	<- channelForTotalSuppliesAndStakingPercentageSaving
 
 
-	// Clôture des channels
-	close(channelForTotalSupplies)
-
-	// Inscription dans le log de la fin de ce script
+	// Et fin de ce script (avec inscription dans le log)
 	logger.WriteLogWithoutPrinting("main", "script done")
 	
 }

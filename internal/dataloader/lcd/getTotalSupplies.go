@@ -31,6 +31,7 @@ type totalSuppliesLcdStructure struct {
 type StructReponseTotalSupplies struct {
 	LuncTotalSupply int
 	UstcTotalSupply int
+	// err string
 }
 
 
