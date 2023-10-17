@@ -9,7 +9,7 @@ import (
 )
 
 
-func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructReponseTotalSupplies, nbStakedLuncChannel <-chan lcd.StructReponseNbStakedLunc, exitChannel chan<- bool) () {
+func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructReponseTotalSupplies, nbStakedLuncChannel <-chan lcd.StructReponseNbStakedLunc, exitChannel chan<- bool, channelForErrors chan<- string) () {
 
 	totalSuppliesStruct := <- totalSuppliesChannel
 	nbStakedLuncStruct := <- nbStakedLuncChannel
@@ -24,7 +24,7 @@ func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructRepo
 	if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
 
 		// Enregistrement des total supplies
-		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct)
+		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct, channelForErrors)
 
 		// // Enregistrement du taux de staking
 		// totalSupplyOfLunc := totalSupplies.LuncTotalSupply

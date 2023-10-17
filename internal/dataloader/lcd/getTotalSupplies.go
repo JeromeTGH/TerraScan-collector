@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
-	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
 
@@ -31,11 +30,10 @@ type totalSuppliesLcdStructure struct {
 type StructReponseTotalSupplies struct {
 	LuncTotalSupply int
 	UstcTotalSupply int
-	// err string
 }
 
 
-func GetTotalSupplies() (StructReponseTotalSupplies, string) {
+func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplies, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseTotalSupplies
@@ -97,8 +95,8 @@ func GetTotalSupplies() (StructReponseTotalSupplies, string) {
 
 	// Si jamais les variables "LUNCtotalSupply" et "USTCtotalSupply" n'ont pas été impactées, alors on remonte une erreur
 	if(LUNCtotalSupply == -1 || USTCtotalSupply == -1) {
-		stringToReturn := fmt.Sprintf("GetTotalSupplies : -1 returned by function.\nError = %s", reponseJSON)
-		logger.WriteLog("dataloader", stringToReturn)
+		stringToReturn := fmt.Sprintf("[dataloader] GetTotalSupplies : -1 returned by function.\nError = %s", reponseJSON)
+		channelForErrors <- stringToReturn
 		return reponseEnRetour, "failed to get 'uusd' or 'uluna' amount from LCD (-1 returned)"
 	}
 

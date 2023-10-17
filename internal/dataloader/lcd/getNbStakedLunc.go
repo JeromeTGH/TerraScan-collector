@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
-	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
 
@@ -26,11 +25,11 @@ type nbStakedLuncLcdStructure struct {
 
 type StructReponseNbStakedLunc struct {
 	NbStakedLunc int
-	Err string
+	// Autres infos inutilisées, pour l'instant
 }
 
 
-func GetNbStakedLunc() (StructReponseNbStakedLunc, string) {
+func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseNbStakedLunc
@@ -80,8 +79,8 @@ func GetNbStakedLunc() (StructReponseNbStakedLunc, string) {
 
 	// Si jamais ce n'est pas supérieur à zéro, alors on remonte une erreur
 	if(nbStakedLunc <= 0) {
-		stringToReturn := fmt.Sprintf("GetNbStakedLunc : -1 or 0 returned by function.\nError = %s", reponseJSON)
-		logger.WriteLog("dataloader", stringToReturn)
+		stringToReturn := fmt.Sprintf("[dataloader] GetNbStakedLunc : -1 or 0 returned by function.\nError = %s", reponseJSON)
+		channelForErrors <- stringToReturn
 		return reponseEnRetour, "failed to get 'bonded tokens' from LCD (-1 or 0 returned)"
 	}
 

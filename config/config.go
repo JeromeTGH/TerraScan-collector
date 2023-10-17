@@ -40,10 +40,10 @@ func LoadConfig() {
 	_, errStat := os.Stat(configDataFile)
 	if errStat != nil {
 		if os.IsNotExist(errStat) {
-			logger.WriteLog("config", "config file not found")
+			logger.WriteLog("[config] config file not found")
 			os.Exit(500)
 		} else {
-			logger.WriteLog("config", errStat.Error())
+			logger.WriteLog("[config] " + errStat.Error())
 			panic(errStat)
 		}
 	}
@@ -51,20 +51,20 @@ func LoadConfig() {
 	// Lit le fichier contenant les données de config
 	privateData, errOsReadFile := os.ReadFile(configDataFile)
 	if errOsReadFile != nil {
-		logger.WriteLog("config", "failed to read config file")
+		logger.WriteLog("[config] failed to read config file")
 		panic(errOsReadFile)
 	}
 
 	// Mesure la quantité de données, pour savoir le fichier de config contient un "minimum" de données
 	if len(privateData) < 300 {
-		logger.WriteLog("config", "not enough data, in config file")
+		logger.WriteLog("[config] not enough data, in config file")
 		os.Exit(500)
 	}
 
 	// Parse le fichier lu, pour le mettre dans la structure de config
 	errYamlUnmarshal := yaml.Unmarshal([]byte(privateData), &AppConfig)
 	if errYamlUnmarshal != nil {
-		logger.WriteLog("config", "failed to unmarshal config data")
+		logger.WriteLog("[config] failed to unmarshal config data")
 		panic(errYamlUnmarshal)
 	}
 

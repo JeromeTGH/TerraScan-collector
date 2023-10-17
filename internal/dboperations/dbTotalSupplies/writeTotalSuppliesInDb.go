@@ -7,13 +7,12 @@ import (
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
-	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	"github.com/JeromeTGH/TerraScan-collector/internal/mailsender"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
+func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelForErrors chan<- string) {
 
 	// Génération des valeurs à enregistrer
 	currentTime := time.Now().UTC()
@@ -41,14 +40,14 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 	var bCreateTableNeeded = false
 	lastInsertId, errInsert := db.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
 	if errInsert != nil {
-		stringToReturn := fmt.Sprintf("WriteTotalSuppliesInDb : failed (%s)", errInsert.Error())
-		logger.WriteLog("dboperations", stringToReturn)	
+		stringToReturn := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert.Error())
+		channelForErrors <- stringToReturn
 		if strings.Contains(errInsert.Error(), "doesn't exist") {
 			// Si c'est une erreur du type "table inexistante", alors on va essayer de la créer, et de refaire l'insertion
 			bCreateTableNeeded = true
 		} else {
 			// Autre erreur, on quitte cette fonction
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>")
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>", channelForErrors)
 			return
 		}
 	}
@@ -56,31 +55,31 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies) {
 	// Check s'il y a eu une erreur, de type "table inexistante"
 	if bCreateTableNeeded {
 		// Création de la table, car inexistante
-		errCreation := CreateTotalSuppliesTable()
+		errCreation := CreateTotalSuppliesTable(channelForErrors)
 		if errCreation != nil {
-			stringToReturn2 := fmt.Sprintf("WriteTotalSuppliesInDb : failed (%s)", errCreation.Error())
-			logger.WriteLog("dboperations", stringToReturn2)
-			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>Failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>")
+			stringToReturn2 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errCreation.Error())
+			channelForErrors <- stringToReturn2
+			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>Failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForErrors)
 			return
 		}
-		stringToReturn3 := "WriteTotalSuppliesInDb : new table created successfully"
-		logger.WriteLog("dboperations", stringToReturn3)
+		stringToReturn3 := "[dboperations] WriteTotalSuppliesInDb : new table created successfully"
+		channelForErrors <- stringToReturn3
 
 		// Et re-tentative d'insertion
 		lastInsertId2, errInsert2 := db.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
 
 		if errInsert2 != nil {
-			stringToReturn4 := fmt.Sprintf("WriteTotalSuppliesInDb : failed (%s)", errInsert2.Error())
-			logger.WriteLog("dboperations", stringToReturn4)
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>")
+			stringToReturn4 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert2.Error())
+			channelForErrors <- stringToReturn4
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForErrors)
 			return
 		}
 
-		stringToReturn5 := fmt.Sprintf("WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId2)
-		logger.WriteLog("dboperations", stringToReturn5)
+		stringToReturn5 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId2)
+		channelForErrors <- stringToReturn5
 	} else {
-		stringToReturn6 := fmt.Sprintf("WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId)
-		logger.WriteLog("dboperations", stringToReturn6)
+		stringToReturn6 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId)
+		channelForErrors <- stringToReturn6
 	}
 
 

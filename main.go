@@ -9,42 +9,48 @@ import (
 )
 
 
-
 func main() {
 
 	// Chargement des données de configuration, dans la variable "AppConfig"
 	config.LoadConfig()
 	
 	// Enregistrement des date/heure de démarrage, dans le fichier log
-	logger.WriteLogWithoutPrinting("main", "script started")
+	logger.WriteLogWithoutPrinting("[main] script called")
 
-	// Channel qui stockera les éventuelles erreurs à noter dans le fichier log
-	// channelForErrorMsgs := make(chan string)
+	// Channel qui contiendra toutes les lignes "intermédiaires" à stocker dans le fichier log
+	channelForLogMsgs := make(chan string, 1000)
 	
 	// Channels de LOADING data
-	channelForTotalSuppliesLoading := make(chan lcd.StructReponseTotalSupplies)
-	channelForNbStakedLunc := make(chan lcd.StructReponseNbStakedLunc)
+	channelForTotalSuppliesLoading := make(chan lcd.StructReponseTotalSupplies, 1)
+	channelForNbStakedLunc := make(chan lcd.StructReponseNbStakedLunc, 1)
 
 	// Channels de SAVING data
-	channelForTotalSuppliesAndStakingInfosSaving := make(chan bool)
+	channelForTotalSuppliesAndStakingInfosSaving := make(chan bool, 1)
 
 	// Clôture de tous channels à la sortie de cette fonction
+	defer close(channelForLogMsgs)
 	defer close(channelForTotalSuppliesLoading)
 	defer close(channelForNbStakedLunc)
 	defer close(channelForTotalSuppliesAndStakingInfosSaving)
 	
-	// Chargement de données auprès du LCD
-	go dataloader.LoadTotalSupplies(channelForTotalSuppliesLoading)
-	go dataloader.LoadNbStakedLunc(channelForNbStakedLunc)
+	// Chargement asynchrone de données auprès du LCD
+	go dataloader.LoadTotalSupplies(channelForTotalSuppliesLoading, channelForLogMsgs)
+	go dataloader.LoadNbStakedLunc(channelForNbStakedLunc, channelForLogMsgs)
 
-	// Récupération des données via les différents channels, et enregistrement en BDD
-	go dboperations.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingInfosSaving)
+	// Enregistrements asynchrone en BDD
+	go dboperations.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingInfosSaving, channelForLogMsgs)
 
-	// Attente que tous les "saving chanels" aient répondu
+	// Attente que tous les "saving chanels" aient fini leur tâche
 	<- channelForTotalSuppliesAndStakingInfosSaving
 
+	// Enregistrement de tous les messages "intermédiaire" à inscrire dans le log
+	nbMsgs := len(channelForLogMsgs)
+	for idxMsg := 0; idxMsg < nbMsgs ; idxMsg++ {
+		msg := <- channelForLogMsgs
+		logger.WriteLog(msg)
+	}
 
 	// Et fin de ce script (avec inscription dans le log)
-	logger.WriteLogWithoutPrinting("main", "script done")
+	logger.WriteLogWithoutPrinting("[main] script done")
 	
 }

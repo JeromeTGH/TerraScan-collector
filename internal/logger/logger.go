@@ -6,17 +6,17 @@ import (
 	"os"
 )
 
-func WriteLog(prefix string, textToAppend string) {
+func WriteLog(textToAppend string) {
 
 	// Écriture dans le fichier log
-	WriteLogWithoutPrinting(prefix, textToAppend)
+	WriteLogWithoutPrinting(textToAppend)
 
 	// Et écriture dans la console aussi
-	fmt.Println("[" + prefix + "] " + textToAppend)
+	fmt.Println(textToAppend)
 	
 }
 
-func WriteLogWithoutPrinting(prefix string, textToAppend string) {
+func WriteLogWithoutPrinting(textToAppend string) {
 
 	// Ouverture du fichier log
 	logFile, errOpenLogFile := os.OpenFile("./logs/activity.log", os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)	// 6 = rw pour le créateur, 4=read only pour les autres
@@ -27,8 +27,8 @@ func WriteLogWithoutPrinting(prefix string, textToAppend string) {
 
 	// Écriture d'une nouvelle ligne
 	logger := log.New(logFile, "", log.LstdFlags)
-	logger.Println("[" + prefix + "] " + textToAppend)
+	logger.Println(textToAppend)
 	// Nota : exemple de ligne écrite :
-	//         [main] 2023/09/30 15:12:02 Script called
+	//              2023/10/17 21:46:18 [main] script called
 	
 }

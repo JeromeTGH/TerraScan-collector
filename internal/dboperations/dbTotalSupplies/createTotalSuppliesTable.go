@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
-	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func CreateTotalSuppliesTable() error {
+func CreateTotalSuppliesTable(channelForErrors chan<- string) error {
 
 	// Construction de la requête
 	rqt := "CREATE TABLE IF NOT EXISTS tblTotalSupplies3 ("
@@ -28,8 +27,8 @@ func CreateTotalSuppliesTable() error {
 	// Exécution de la requête
 	errExec := db.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
-		stringToReturn := fmt.Sprintf("CreateTotalSuppliesTable : failed (%s)", errExec.Error())
-		logger.WriteLog("dboperations", stringToReturn)
+		stringToReturn := fmt.Sprintf("[dboperations] CreateTotalSuppliesTable : failed (%s)", errExec.Error())
+		channelForErrors <- stringToReturn
 		return errExec
 	}
 

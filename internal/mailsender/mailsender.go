@@ -2,12 +2,11 @@ package mailsender
 
 import (
 	"github.com/JeromeTGH/TerraScan-collector/config"
-	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	"gopkg.in/gomail.v2"
 )
 
 
-func Sendmail(sujet string, body string) {
+func Sendmail(sujet string, body string, channelForErrors chan<- string) {
 
     message := gomail.NewMessage()
     message.SetHeader("From", config.AppConfig.Email.From)
@@ -18,9 +17,9 @@ func Sendmail(sujet string, body string) {
 	dialer := gomail.NewDialer(config.AppConfig.Email.HostName, config.AppConfig.Email.SmtpPort, config.AppConfig.Email.From, config.AppConfig.Email.Pwd)
 
     if err := dialer.DialAndSend(message); err != nil {
-		logger.WriteLog("mailsender", "failed to send mail")
+		channelForErrors <- "[mailsender] failed to send mail"
     } else {
-		logger.WriteLog("mailsender", "email sent successfully")
+		channelForErrors <- "[mailsender] email sent successfully"
 	}
 
 }
