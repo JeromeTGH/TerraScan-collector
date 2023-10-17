@@ -7,7 +7,6 @@ import (
 
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
 	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 	"github.com/JeromeTGH/TerraScan-collector/internal/mailsender"
 )
@@ -50,29 +49,4 @@ func LoadTotalSupplies(c chan<- lcd.StructReponseTotalSupplies) () {
 
 	c <- lcd.StructReponseTotalSupplies{}
 
-}
-
-
-func SaveTotalSuppliesAndStakingPercentage(totalSuppliesChannel <-chan lcd.StructReponseTotalSupplies, nbStakedLuncChannel <-chan lcd.StructReponseNbStakedLunc, exitChannel chan<- bool) () {
-
-	totalSuppliesStruct := <- totalSuppliesChannel
-	nbStakedLuncStruct := <- nbStakedLuncChannel
-
-	fmt.Println("nbStakedLunc :", nbStakedLuncStruct.NbStakedLunc)
-	
-	if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
-
-		// Enregistrement des total supplies		
-		dboperations.WriteTotalSuppliesInDb(totalSuppliesStruct)
-
-		// // Enregistrement du taux de staking
-		// totalSupplyOfLunc := totalSupplies.LuncTotalSupply
-		// nbStakedLunc := <- channelForNbStakedLunc
-		// dboperations.WriteStakingPercentageInDb(nbStakedLunc, totalSupplyOfLunc)
-
-	} else {
-		fmt.Println("Total supplies error")
-	}
-
-	exitChannel <- true
 }
