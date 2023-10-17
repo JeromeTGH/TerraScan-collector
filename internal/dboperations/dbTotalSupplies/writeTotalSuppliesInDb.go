@@ -1,4 +1,4 @@
-package dboperations
+package dbTotalSupplies
 
 import (
 	"fmt"

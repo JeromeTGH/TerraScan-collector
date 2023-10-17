@@ -4,6 +4,7 @@ import (
 	"github.com/JeromeTGH/TerraScan-collector/config"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
 	"github.com/JeromeTGH/TerraScan-collector/internal/logger"
 )
 
@@ -37,7 +38,7 @@ func main() {
 	go dataloader.LoadNbStakedLunc(channelForNbStakedLunc)
 
 	// Récupération des données via les différents channels, et enregistrement en BDD
-	go dataloader.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingInfosSaving)
+	go dboperations.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingInfosSaving)
 
 	// Attente que tous les "saving chanels" aient répondu
 	<- channelForTotalSuppliesAndStakingInfosSaving

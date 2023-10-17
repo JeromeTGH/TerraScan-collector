@@ -1,11 +1,11 @@
-package dataloader
+package dboperations
 
 import (
 	"fmt"
 	"math"
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbTotalSupplies"
 )
 
 
@@ -19,12 +19,12 @@ func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructRepo
 
 	fmt.Println("LuncTotalSupply :", totalSuppliesStruct.LuncTotalSupply)
 	fmt.Println("nbStakedLunc :", nbStakedLuncStruct.NbStakedLunc)
-	fmt.Println("stakingPercentage :", stakingPercentage)
+	fmt.Println("stakingPercentage :", stakingPercentage, "%")
 	
 	if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
 
-		// Enregistrement des total supplies		
-		dboperations.WriteTotalSuppliesInDb(totalSuppliesStruct)
+		// Enregistrement des total supplies
+		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct)
 
 		// // Enregistrement du taux de staking
 		// totalSupplyOfLunc := totalSupplies.LuncTotalSupply
