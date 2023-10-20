@@ -3,7 +3,7 @@ package dbTotalSupplies
 import (
 	"fmt"
 
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbActions"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -13,7 +13,7 @@ func DropTotalSuppliesTable(channelForErrors chan<- string) error {
 	rqt := "DROP TABLE IF EXISTS tblTotalSupplies3"
 
 	// Exécution de la requête
-	errExec := db.ExecCreateOrDrop(rqt)	
+	errExec := dbActions.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] DropTotalSuppliesTable : failed (%s)", errExec.Error())
 		channelForErrors <- stringToReturn

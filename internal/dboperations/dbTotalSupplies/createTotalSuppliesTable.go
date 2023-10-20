@@ -3,7 +3,7 @@ package dbTotalSupplies
 import (
 	"fmt"
 
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbActions"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -25,7 +25,7 @@ func CreateTotalSuppliesTable(channelForErrors chan<- string) error {
 	rqt += ");"
 
 	// Exécution de la requête
-	errExec := db.ExecCreateOrDrop(rqt)	
+	errExec := dbActions.ExecCreateOrDrop(rqt)
 	if errExec != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] CreateTotalSuppliesTable : failed (%s)", errExec.Error())
 		channelForErrors <- stringToReturn

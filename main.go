@@ -50,7 +50,7 @@ func main() {
 		logger.WriteLog(msg)
 	}
 
-	// Et fin de ce script (avec inscription dans le log)
+	// Et fin de ce script (avec mention dans le fichier log)
 	logger.WriteLogWithoutPrinting("[main] script done")
 	
 }

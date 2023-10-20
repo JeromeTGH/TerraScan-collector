@@ -1,4 +1,4 @@
-package db
+package dbActions
 
 import (
 	"database/sql"

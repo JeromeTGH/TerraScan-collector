@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
-	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/db"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbActions"
 	"github.com/JeromeTGH/TerraScan-collector/internal/mailsender"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -38,7 +38,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelF
 
 	// Exécution de la requête
 	var bCreateTableNeeded = false
-	lastInsertId, errInsert := db.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
+	lastInsertId, errInsert := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
 	if errInsert != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert.Error())
 		channelForErrors <- stringToReturn
@@ -66,7 +66,7 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelF
 		channelForErrors <- stringToReturn3
 
 		// Et re-tentative d'insertion
-		lastInsertId2, errInsert2 := db.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
+		lastInsertId2, errInsert2 := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
 
 		if errInsert2 != nil {
 			stringToReturn4 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert2.Error())
