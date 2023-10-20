@@ -1,4 +1,4 @@
-package dbTotalSupplies
+package dbNbStakedLunc
 
 import (
 	"fmt"
@@ -13,9 +13,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelForErrors chan<- string) {
+func WriteNbStakedLuncInDb(dataFromLcd lcd.StructReponseNbStakedLunc, stakingPercentage float64, channelForErrors chan<- string) {
 
 	// Génération des valeurs à enregistrer
+	nbStakedLunc := dataFromLcd.NbStakedLunc
 	currentTime := time.Now().UTC()
 		nAnnee := currentTime.Year()
 		nMois := currentTime.Month()
@@ -33,15 +34,14 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelF
 	bM1 := (nJours == 1 && nHeures == 0);
 	bY1 := (nMois == 1 && nJours == 1 && nHeures == 0);
 
-
 	// Construction de la requête
-	rqt := "INSERT INTO " + config.AppConfig.Bdd.TblTotalSuppliesName + " VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	rqt := "INSERT INTO " + config.AppConfig.Bdd.TblNbStakedLunc + " VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	// Exécution de la requête
 	var bCreateTableNeeded = false
-	lastInsertId, errInsert := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
+	lastInsertId, errInsert := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, nbStakedLunc, stakingPercentage)
 	if errInsert != nil {
-		stringToReturn := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert.Error())
+		stringToReturn := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : failed (%s)", errInsert.Error())
 		channelForErrors <- stringToReturn
 		if strings.Contains(errInsert.Error(), "doesn't exist") {
 			// Si c'est une erreur du type "table inexistante", alors on va essayer de la créer, et de refaire l'insertion
@@ -56,30 +56,30 @@ func WriteTotalSuppliesInDb(dataFromLcd lcd.StructReponseTotalSupplies, channelF
 	// Check s'il y a eu une erreur, de type "table inexistante"
 	if bCreateTableNeeded {
 		// Création de la table, car inexistante
-		errCreation := CreateTotalSuppliesTable(channelForErrors)
+		errCreation := CreateNbStakedLuncTable(channelForErrors)
 		if errCreation != nil {
-			stringToReturn2 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errCreation.Error())
+			stringToReturn2 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : failed (%s)", errCreation.Error())
 			channelForErrors <- stringToReturn2
 			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>Failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForErrors)
 			return
 		}
-		stringToReturn3 := "[dboperations] WriteTotalSuppliesInDb : new table created successfully"
+		stringToReturn3 := "[dboperations] WriteNbStakedLuncInDb : new table created successfully"
 		channelForErrors <- stringToReturn3
 
 		// Et re-tentative d'insertion
-		lastInsertId2, errInsert2 := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.LuncTotalSupply, dataFromLcd.UstcTotalSupply)	
+		lastInsertId2, errInsert2 := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, nbStakedLunc, stakingPercentage)
 
 		if errInsert2 != nil {
-			stringToReturn4 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : failed (%s)", errInsert2.Error())
+			stringToReturn4 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : failed (%s)", errInsert2.Error())
 			channelForErrors <- stringToReturn4
 			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForErrors)
 			return
 		}
 
-		stringToReturn5 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId2)
+		stringToReturn5 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : insert completed successfully (lastInsertId = %d)", lastInsertId2)
 		channelForErrors <- stringToReturn5
 	} else {
-		stringToReturn6 := fmt.Sprintf("[dboperations] WriteTotalSuppliesInDb : insert completed successfully (lastInsertId = %d)", lastInsertId)
+		stringToReturn6 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : insert completed successfully (lastInsertId = %d)", lastInsertId)
 		channelForErrors <- stringToReturn6
 	}
 

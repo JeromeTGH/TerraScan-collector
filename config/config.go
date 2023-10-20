@@ -22,6 +22,8 @@ type Config struct {
 		UserName  string `yaml:"user_name"`
 		Password  string `yaml:"password"`
 		Port      int `yaml:"port"`
+		TblTotalSuppliesName string `yaml:"tbl_TotalSupplies_name"`
+		TblNbStakedLunc string `yaml:"tbl_NbStakedLunc_name"`
 	}
 	Email struct {
 		HostName  string `yaml:"host_name"`

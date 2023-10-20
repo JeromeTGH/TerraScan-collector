@@ -10,6 +10,8 @@ bdd:
   user_name: xxx
   password: xxx
   port: 3306
+  tbl_TotalSupplies_name: tblTotalSupplies3
+  tbl_NbStakedLunc_name: tblNbStakedLunc
 email:
   host_name: xxxxxxxx.xxx
   smtp_port: 465

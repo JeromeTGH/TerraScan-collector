@@ -1,4 +1,4 @@
-package dbTotalSupplies
+package dbNbStakedLunc
 
 import (
 	"fmt"
@@ -8,10 +8,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func CreateTotalSuppliesTable(channelForErrors chan<- string) error {
+func CreateNbStakedLuncTable(channelForErrors chan<- string) error {
 
 	// Construction de la requête
-	rqt := "CREATE TABLE IF NOT EXISTS " + config.AppConfig.Bdd.TblTotalSuppliesName + " ("
+	rqt := "CREATE TABLE IF NOT EXISTS " + config.AppConfig.Bdd.TblNbStakedLunc + " ("
 	rqt += "enregNumber INT AUTO_INCREMENT PRIMARY KEY,"
 	rqt += "code VARCHAR(12) UNIQUE,"
 	rqt += "datetimeUTC DATETIME,"
@@ -21,14 +21,14 @@ func CreateTotalSuppliesTable(channelForErrors chan<- string) error {
 	rqt += "bW1 BOOLEAN NOT NULL DEFAULT FALSE,"
 	rqt += "bM1 BOOLEAN NOT NULL DEFAULT FALSE,"
 	rqt += "bY1 BOOLEAN NOT NULL DEFAULT FALSE,"
-	rqt += "luncAmount BIGINT,"
-	rqt += "ustcAmount BIGINT"
+	rqt += "nbStakedLunc BIGINT,"
+	rqt += "stakingPercentage FLOAT"
 	rqt += ");"
 
 	// Exécution de la requête
 	errExec := dbActions.ExecCreateOrDrop(rqt)
 	if errExec != nil {
-		stringToReturn := fmt.Sprintf("[dboperations] CreateTotalSuppliesTable : failed (%s)", errExec.Error())
+		stringToReturn := fmt.Sprintf("[dboperations] CreateNbStakedLuncTable : failed (%s)", errExec.Error())
 		channelForErrors <- stringToReturn
 		return errExec
 	}

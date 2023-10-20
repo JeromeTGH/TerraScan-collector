@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbNbStakedLunc"
 	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbTotalSupplies"
 )
 
@@ -26,10 +27,8 @@ func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructRepo
 		// Enregistrement des total supplies
 		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct, channelForErrors)
 
-		// // Enregistrement du taux de staking
-		// totalSupplyOfLunc := totalSupplies.LuncTotalSupply
-		// nbStakedLunc := <- channelForNbStakedLunc
-		// dboperations.WriteStakingPercentageInDb(nbStakedLunc, totalSupplyOfLunc)
+		// Enregistrement du nombre de LUNC stakés, et du taux de staking
+		dbNbStakedLunc.WriteNbStakedLuncInDb(nbStakedLuncStruct, stakingPercentage, channelForErrors)
 
 	} else {
 		fmt.Println("Total supplies error")

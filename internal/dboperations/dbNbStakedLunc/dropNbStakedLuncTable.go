@@ -1,4 +1,4 @@
-package dbTotalSupplies
+package dbNbStakedLunc
 
 import (
 	"fmt"
@@ -8,15 +8,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func DropTotalSuppliesTable(channelForErrors chan<- string) error {
+func DropNbStakedLuncTable(channelForErrors chan<- string) error {
 
 	// Construction de la requête
-	rqt := "DROP TABLE IF EXISTS " + config.AppConfig.Bdd.TblTotalSuppliesName
+	rqt := "DROP TABLE IF EXISTS " + config.AppConfig.Bdd.TblNbStakedLunc
 
 	// Exécution de la requête
 	errExec := dbActions.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
-		stringToReturn := fmt.Sprintf("[dboperations] DropTotalSuppliesTable : failed (%s)", errExec.Error())
+		stringToReturn := fmt.Sprintf("[dboperations] DropNbStakedLuncTable : failed (%s)", errExec.Error())
 		channelForErrors <- stringToReturn
 		return errExec
 	}
