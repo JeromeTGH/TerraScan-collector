@@ -11,9 +11,6 @@ import (
 func SaveCommunityPoolInfos(communityPoolContentChannel <-chan lcd.StructReponseCommunityPoolContent, exitChannel chan<- bool, channelForErrors chan<- string) () {
 
 	communityPoolContent := <- communityPoolContentChannel
-
-	fmt.Println("LUNCs in community pool :", communityPoolContent.NbLuncInCommunityPool)
-	fmt.Println("USTCs in community pool :", communityPoolContent.NbUstcInCommunityPool)
 	
 	if(communityPoolContent != lcd.StructReponseCommunityPoolContent{}) {
 
