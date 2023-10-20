@@ -35,7 +35,7 @@ func GetCommunityPoolContent(channelForErrors chan<- string) (StructReponseCommu
 	var reponseEnRetour StructReponseCommunityPoolContent
 
 	// Path, pour accéder à ce qui nous intéresse
-	var path = "/cosmos/distribution/v1beta1/community_pool"
+	var path = config.AppConfig.Lcd.PathForCommunityPoolContent
 
 	// Récupération de l'url du LCD
 	var LCDurl = config.AppConfig.Lcd.Url

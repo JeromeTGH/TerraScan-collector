@@ -35,7 +35,7 @@ func GetOraclePoolContent(channelForErrors chan<- string) (StructReponseOraclePo
 	var reponseEnRetour StructReponseOraclePoolContent
 
 	// Path, pour accéder à ce qui nous intéresse
-	var path = "/cosmos/bank/v1beta1/balances/terra1jgp27m8fykex4e4jtt0l7ze8q528ux2lh4zh0f"
+	var path = config.AppConfig.Lcd.PathForOraclePoolContent
 
 	// Récupération de l'url du LCD
 	var LCDurl = config.AppConfig.Lcd.Url

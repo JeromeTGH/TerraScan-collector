@@ -1,4 +1,4 @@
-package dbNbStakedLunc
+package dbLuncStaking
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 func DropNbStakedLuncTable(channelForErrors chan<- string) error {
 
 	// Construction de la requête
-	rqt := "DROP TABLE IF EXISTS " + config.AppConfig.Bdd.TblNbStakedLunc
+	rqt := "DROP TABLE IF EXISTS " + config.AppConfig.Bdd.TblLuncStaking
 
 	// Exécution de la requête
 	errExec := dbActions.ExecCreateOrDrop(rqt)	

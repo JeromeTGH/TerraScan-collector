@@ -1,4 +1,4 @@
-package dbNbStakedLunc
+package dbLuncStaking
 
 import (
 	"fmt"
@@ -35,7 +35,7 @@ func WriteNbStakedLuncInDb(dataFromLcd lcd.StructReponseNbStakedLunc, stakingPer
 	bY1 := (nMois == 1 && nJours == 1 && nHeures == 0);
 
 	// Construction de la requête
-	rqt := "INSERT INTO " + config.AppConfig.Bdd.TblNbStakedLunc + " VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	rqt := "INSERT INTO " + config.AppConfig.Bdd.TblLuncStaking + " VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	// Exécution de la requête
 	var bCreateTableNeeded = false

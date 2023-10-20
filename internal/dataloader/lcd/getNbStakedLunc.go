@@ -35,7 +35,7 @@ func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc,
 	var reponseEnRetour StructReponseNbStakedLunc
 
 	// Path, pour accéder à ce qui nous intéresse
-	var path = "/cosmos/staking/v1beta1/pool"
+	var path = config.AppConfig.Lcd.PathForLuncStaking
 
 	// Récupération de l'url du LCD
 	var LCDurl = config.AppConfig.Lcd.Url

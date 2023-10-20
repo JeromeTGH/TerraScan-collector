@@ -39,7 +39,7 @@ func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplie
 	var reponseEnRetour StructReponseTotalSupplies
 
 	// Path, pour accéder à ce qui nous intéresse
-	var path = "/cosmos/bank/v1beta1/supply?pagination.limit=9999"
+	var path = config.AppConfig.Lcd.PathForTotalSupplies
 
 	// Récupération de l'url du LCD
 	var LCDurl = config.AppConfig.Lcd.Url

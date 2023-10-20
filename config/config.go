@@ -15,6 +15,10 @@ type Config struct {
 		GetTimeoutInSeconds 			int `yaml:"get_timeout_in_seconds"`
 		NbOfAttemptsIfFailure 			int `yaml:"nb_of_attempts_if_failure"`
 		NbMinutesOfBreakBetweenAttempts int `yaml:"nb_minutes_of_break_between_attempts"`
+		PathForTotalSupplies 			string `yaml:"path_for_total_supplies"`
+		PathForLuncStaking	 			string `yaml:"path_for_lunc_staking"`
+		PathForCommunityPoolContent		string `yaml:"path_for_community_pool_content"`
+		PathForOraclePoolContent 		string `yaml:"path_for_oracle_pool_content"`
 	}
 	Bdd struct {
 		HostName  				string `yaml:"host_name"`
@@ -23,7 +27,7 @@ type Config struct {
 		Password  				string `yaml:"password"`
 		Port      				int `yaml:"port"`
 		TblTotalSuppliesName	string `yaml:"tbl_TotalSupplies_name"`
-		TblNbStakedLunc 		string `yaml:"tbl_NbStakedLunc_name"`
+		TblLuncStaking 			string `yaml:"tbl_LuncStaking_name"`
 		TblCommunityPoolContent string `yaml:"tbl_CommunityPoolContent_name"`
 		TblOraclePoolContent 	string `yaml:"tbl_OraclePoolContent_name"`
 	}

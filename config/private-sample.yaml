@@ -1,22 +1,26 @@
 ---
 lcd:
-  url: https://terra-classic-lcd.publicnode.com
+  url: xxx
   get_timeout_in_seconds: 30
   nb_of_attempts_if_failure: 5
   nb_minutes_of_break_between_attempts: 5
+  path_for_total_supplies: xxx
+  path_for_lunc_staking: xxx
+  path_for_community_pool_content: xxx
+  path_for_oracle_pool_content: xxx
 bdd:
-  host_name: xxxxxxxx.xxx
+  host_name: xxx
   db_name: xxx
   user_name: xxx
   password: xxx
   port: 3306
   tbl_TotalSupplies_name: tblTotalSupplies
-  tbl_NbStakedLunc_name: tblNbStakedLunc
+  tbl_LuncStaking_name: tblLuncStaking
   tbl_CommunityPoolContent_name: tblCommunityPoolContent
   tbl_OraclePoolContent_name: tblOraclePoolContent
 email:
-  host_name: xxxxxxxx.xxx
+  host_name: xxx
   smtp_port: 465
-  from: xxxxxxxx@xxxxxxxx.xxx
+  from: xxx
   pwd: xxx
-  to: xxxxxxxx@xxxxxxxx.xxx
+  to: xxx

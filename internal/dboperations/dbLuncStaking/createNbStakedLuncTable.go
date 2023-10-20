@@ -1,4 +1,4 @@
-package dbNbStakedLunc
+package dbLuncStaking
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 func CreateNbStakedLuncTable(channelForErrors chan<- string) error {
 
 	// Construction de la requête
-	rqt := "CREATE TABLE IF NOT EXISTS " + config.AppConfig.Bdd.TblNbStakedLunc + " ("
+	rqt := "CREATE TABLE IF NOT EXISTS " + config.AppConfig.Bdd.TblLuncStaking + " ("
 	rqt += "enregNumber INT AUTO_INCREMENT PRIMARY KEY,"
 	rqt += "code VARCHAR(12) UNIQUE,"
 	rqt += "datetimeUTC DATETIME,"
