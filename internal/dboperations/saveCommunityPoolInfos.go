@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JeromeTGH/TerraScan-collector/internal/dataloader/lcd"
+	"github.com/JeromeTGH/TerraScan-collector/internal/dboperations/dbCommunityPoolContent"
 )
 
 
@@ -14,17 +15,14 @@ func SaveCommunityPoolInfos(communityPoolContentChannel <-chan lcd.StructReponse
 	fmt.Println("LUNCs in community pool :", communityPoolContent.NbLuncInCommunityPool)
 	fmt.Println("USTCs in community pool :", communityPoolContent.NbUstcInCommunityPool)
 	
-	// if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
+	if(communityPoolContent != lcd.StructReponseCommunityPoolContent{}) {
 
-	// 	// Enregistrement des total supplies
-	// 	dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct, channelForErrors)
+		// Enregistrement du nombre de LUNC et USTC contenus dans la Community Pool
+		dbCommunityPoolContent.WriteCommunityPoolContentInDb(communityPoolContent, channelForErrors)
 
-	// 	// Enregistrement du nombre de LUNC stakés, et du taux de staking
-	// 	dbNbStakedLunc.WriteNbStakedLuncInDb(nbStakedLuncStruct, stakingPercentage, channelForErrors)
-
-	// } else {
-	// 	fmt.Println("Total supplies error")
-	// }
+	} else {
+		fmt.Println("SaveCommunityPoolInfos error")
+	}
 
 	exitChannel <- true
 }

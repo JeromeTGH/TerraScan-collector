@@ -48,7 +48,7 @@ func WriteNbStakedLuncInDb(dataFromLcd lcd.StructReponseNbStakedLunc, stakingPer
 			bCreateTableNeeded = true
 		} else {
 			// Autre erreur, on quitte cette fonction
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>", channelForErrors)
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteNbStakedLuncInDb : failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>", channelForErrors)
 			return
 		}
 	}
@@ -60,7 +60,7 @@ func WriteNbStakedLuncInDb(dataFromLcd lcd.StructReponseNbStakedLunc, stakingPer
 		if errCreation != nil {
 			stringToReturn2 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : failed (%s)", errCreation.Error())
 			channelForErrors <- stringToReturn2
-			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>Failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForErrors)
+			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>WriteNbStakedLuncInDb : failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForErrors)
 			return
 		}
 		stringToReturn3 := "[dboperations] WriteNbStakedLuncInDb : new table created successfully"
@@ -72,7 +72,7 @@ func WriteNbStakedLuncInDb(dataFromLcd lcd.StructReponseNbStakedLunc, stakingPer
 		if errInsert2 != nil {
 			stringToReturn4 := fmt.Sprintf("[dboperations] WriteNbStakedLuncInDb : failed (%s)", errInsert2.Error())
 			channelForErrors <- stringToReturn4
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>Failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForErrors)
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteNbStakedLuncInDb : failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForErrors)
 			return
 		}
 

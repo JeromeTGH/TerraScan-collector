@@ -71,11 +71,11 @@ func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc,
 
 	// Récupération du nombre de Lunc stakés ("bonded tokens")
 	var nbStakedLunc int = -1
-	bonded_tokens, errBondedTokens := strconv.Atoi(dataStruct.Pool.Bonded_tokens)
+	bonded_tokens, errBondedTokens := strconv.ParseFloat(dataStruct.Pool.Bonded_tokens, 64)
 	if errBondedTokens != nil {
 		return reponseEnRetour, "failed to convert 'uluna' amount in 'lunc' from LCD"
 	}
-	nbStakedLunc = bonded_tokens / 1000000
+	nbStakedLunc = int(bonded_tokens / 1000000)
 
 	// Si jamais ce n'est pas supérieur à zéro, alors on remonte une erreur
 	if(nbStakedLunc <= 0) {

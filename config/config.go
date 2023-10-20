@@ -11,19 +11,20 @@ const configDataFile = "./config/private/private.yaml"
 
 type Config struct {
 	Lcd struct {
-		Url string `yaml:"url"`
-		GetTimeoutInSeconds int `yaml:"get_timeout_in_seconds"`
-		NbOfAttemptsIfFailure int `yaml:"nb_of_attempts_if_failure"`
+		Url 							string `yaml:"url"`
+		GetTimeoutInSeconds 			int `yaml:"get_timeout_in_seconds"`
+		NbOfAttemptsIfFailure 			int `yaml:"nb_of_attempts_if_failure"`
 		NbMinutesOfBreakBetweenAttempts int `yaml:"nb_minutes_of_break_between_attempts"`
 	}
 	Bdd struct {
-		HostName  string `yaml:"host_name"`
-		DbName    string `yaml:"db_name"`
-		UserName  string `yaml:"user_name"`
-		Password  string `yaml:"password"`
-		Port      int `yaml:"port"`
-		TblTotalSuppliesName string `yaml:"tbl_TotalSupplies_name"`
-		TblNbStakedLunc string `yaml:"tbl_NbStakedLunc_name"`
+		HostName  				string `yaml:"host_name"`
+		DbName    				string `yaml:"db_name"`
+		UserName  				string `yaml:"user_name"`
+		Password  				string `yaml:"password"`
+		Port      				int `yaml:"port"`
+		TblTotalSuppliesName	string `yaml:"tbl_TotalSupplies_name"`
+		TblNbStakedLunc 		string `yaml:"tbl_NbStakedLunc_name"`
+		TblCommunityPoolContent string `yaml:"tbl_CommunityPoolContent_name"`
 	}
 	Email struct {
 		HostName  string `yaml:"host_name"`

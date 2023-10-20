@@ -12,6 +12,7 @@ bdd:
   port: 3306
   tbl_TotalSupplies_name: tblTotalSupplies3
   tbl_NbStakedLunc_name: tblNbStakedLunc
+  tbl_CommunityPoolContent_name: tblCommunityPoolContent
 email:
   host_name: xxxxxxxx.xxx
   smtp_port: 465

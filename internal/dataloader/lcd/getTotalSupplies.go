@@ -78,18 +78,18 @@ func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplie
 	var USTCtotalSupply int = -1
 	for i:=0 ; i<len(dataStruct.Supply) ; i++ {
 		if dataStruct.Supply[i].Denom == "uluna" {
-			uluna, errUluna := strconv.Atoi(dataStruct.Supply[i].Amount)
+			uluna, errUluna := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUluna != nil {
 				return reponseEnRetour, "failed to convert 'uluna' amount in 'lunc' from LCD"
 			}
-			LUNCtotalSupply = uluna / 1000000
+			LUNCtotalSupply = int(uluna / 1000000)
 		}
 		if dataStruct.Supply[i].Denom == "uusd" {
-			uusd, errUusd := strconv.Atoi(dataStruct.Supply[i].Amount)
+			uusd, errUusd := strconv.ParseFloat(dataStruct.Supply[i].Amount, 64)
 			if errUusd != nil {
 				return reponseEnRetour, "failed to convert 'uusd' amount in 'ustc' from LCD"
 			}
-			USTCtotalSupply = uusd / 1000000
+			USTCtotalSupply = int(uusd / 1000000)
 		}
 	}
 

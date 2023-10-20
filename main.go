@@ -17,32 +17,29 @@ func main() {
 	// Enregistrement des date/heure de démarrage, dans le fichier log
 	logger.WriteLogWithoutPrinting("[main] script called")
 
-	// Channel qui contiendra toutes les lignes "intermédiaires" à stocker dans le fichier log
-	channelForLogMsgs := make(chan string, 1000)
-	
-	// Channels de LOADING data
-	channelForTotalSuppliesLoading := make(chan lcd.StructReponseTotalSupplies, 1)
-	channelForNbStakedLunc := make(chan lcd.StructReponseNbStakedLunc, 1)
-	channelForCommunityPoolLoading := make(chan lcd.StructReponseCommunityPoolContent, 1)
-
-	// Channels de SAVING data
-	channelForTotalSuppliesAndStakingInfosSaving := make(chan bool, 1)
-	channelForCommunityPoolInfosSaving := make(chan bool, 1)
+	// Channels
+	channelForLogMsgs := make(chan string, 1000)											// Logs data
+	channelForTotalSuppliesLoading := make(chan lcd.StructReponseTotalSupplies, 1)			// Loading data
+	channelForNbStakedLuncLoading := make(chan lcd.StructReponseNbStakedLunc, 1)			// Loading data
+	channelForCommunityPoolLoading := make(chan lcd.StructReponseCommunityPoolContent, 1)	// Loading data
+	channelForTotalSuppliesAndStakingInfosSaving := make(chan bool, 1)						// Saving data
+	channelForCommunityPoolInfosSaving := make(chan bool, 1)								// Saving data
 
 	// Clôture de tous channels à la sortie de cette fonction
 	defer close(channelForLogMsgs)
 	defer close(channelForTotalSuppliesLoading)
-	defer close(channelForNbStakedLunc)
+	defer close(channelForNbStakedLuncLoading)
 	defer close(channelForCommunityPoolLoading)
 	defer close(channelForTotalSuppliesAndStakingInfosSaving)
+	defer close(channelForCommunityPoolInfosSaving)
 	
 	// Chargement asynchrone de données auprès du LCD
 	go dataloader.LoadTotalSupplies(channelForTotalSuppliesLoading, channelForLogMsgs)
-	go dataloader.LoadNbStakedLunc(channelForNbStakedLunc, channelForLogMsgs)
+	go dataloader.LoadNbStakedLunc(channelForNbStakedLuncLoading, channelForLogMsgs)
 	go dataloader.LoadCommunityPoolContent(channelForCommunityPoolLoading, channelForLogMsgs)
 
 	// Enregistrements asynchrone en BDD
-	go dboperations.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLunc, channelForTotalSuppliesAndStakingInfosSaving, channelForLogMsgs)
+	go dboperations.SaveTotalSuppliesAndStakingInfos(channelForTotalSuppliesLoading, channelForNbStakedLuncLoading, channelForTotalSuppliesAndStakingInfosSaving, channelForLogMsgs)
 	go dboperations.SaveCommunityPoolInfos(channelForCommunityPoolLoading, channelForCommunityPoolInfosSaving, channelForLogMsgs)
 
 	// Attente que tous les "saving chanels" aient fini leur tâche
