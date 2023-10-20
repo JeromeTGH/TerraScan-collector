@@ -25,6 +25,7 @@ type Config struct {
 		TblTotalSuppliesName	string `yaml:"tbl_TotalSupplies_name"`
 		TblNbStakedLunc 		string `yaml:"tbl_NbStakedLunc_name"`
 		TblCommunityPoolContent string `yaml:"tbl_CommunityPoolContent_name"`
+		TblOraclePoolContent 	string `yaml:"tbl_OraclePoolContent_name"`
 	}
 	Email struct {
 		HostName  string `yaml:"host_name"`
