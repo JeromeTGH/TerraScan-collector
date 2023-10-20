@@ -17,10 +17,6 @@ func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructRepo
 
 	stakingPercentage := 100 * float64(nbStakedLuncStruct.NbStakedLunc) / float64(totalSuppliesStruct.LuncTotalSupply)
 	stakingPercentage = math.Round(stakingPercentage*100)/100		// Arrondi à 2 chiffres après la virgule
-
-	fmt.Println("LuncTotalSupply :", totalSuppliesStruct.LuncTotalSupply)
-	fmt.Println("nbStakedLunc :", nbStakedLuncStruct.NbStakedLunc)
-	fmt.Println("stakingPercentage :", stakingPercentage, "%")
 	
 	if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
 

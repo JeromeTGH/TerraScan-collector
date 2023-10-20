@@ -36,7 +36,7 @@ func LoadNbStakedLunc(channelForNbStakedLunc chan<- lcd.StructReponseNbStakedLun
 			channelForErrors <- stringToReturn2
 			// Pause de X minutes, avant de retenter, s'il reste des tentatives à faire
 			if idxTentatives != config.AppConfig.Lcd.NbOfAttemptsIfFailure {
-				time.Sleep(time.Duration(config.AppConfig.Lcd.NbMinutesOfBreakBetweenAttempts) * time.Second)
+				time.Sleep(time.Duration(config.AppConfig.Lcd.NbMinutesOfBreakBetweenAttempts) * time.Minute)
 			}
 		}
 	}
