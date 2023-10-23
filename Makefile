@@ -17,3 +17,10 @@ update:
 	@echo "===> Génération d'un nouveau fichier exécutable"
 	@go build ./main.go
 	@echo "===> Mise à jour terminée !"
+
+clearlogfile:
+	@echo "===> Effacement du fichier activity.log"
+	@rm -f ./logs/activity.log
+	@echo "===> Création d'un nouveau fichier log"
+	@touch ./logs/activity.log
+	@echo "===> Fichier log purgé !"
