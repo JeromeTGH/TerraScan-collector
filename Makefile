@@ -1,9 +1,10 @@
 start:
 	@echo "TerraScan-collector make commands :"
-	@echo " - make update         : pour mettre à jour le programme et (re)générer l'exécutable"
-	@echo " - make build          : pour simplement (re)générer le fichier exécutable"
-	@echo " - make clearlogfile   : pour vider le fichier log de suivi (activity.log)"
-	@echo " - make viewlogfile    : pour éditer le fichier activity.log"
+	@echo " - make update                  : pour mettre à jour le programme et (re)générer l'exécutable"
+	@echo " - make build                   : pour simplement (re)générer le fichier exécutable"
+	@echo " - make clearlogsfiles          : pour vider les fichiers log (activity.log et errors.log)"
+	@echo " - make viewactitivylogfile     : pour éditer le fichier activity.log"
+	@echo " - make viewerrorslogfile       : pour éditer le fichier errors.log"
 
 build:
 	@echo "===> Suppression du fichier exécutable 'main', si existant"
@@ -21,14 +22,21 @@ update:
 	@go build ./main.go
 	@echo "===> Mise à jour terminée !"
 
-clearlogfile:
-	@echo "===> Effacement du fichier activity.log"
+clearlogsfiles:
+	@echo "===> Effacement des fichiers activity.log et errors.log"
 	@rm -f ./logs/activity.log
-	@echo "===> Création d'un nouveau fichier log"
+	@rm -f ./logs/errors.log
+	@echo "===> Création de nouveaux fichiers log vides"
 	@touch ./logs/activity.log
-	@echo "===> Fichier log purgé !"
+	@touch ./logs/errors.log
+	@echo "===> Fichiers log purgés !"
 
-viewlogfile:
+viewactitivylogfile:
 	@echo "===> Ouverture du fichier activity.log"
 	@nano ./logs/activity.log
-	@echo "===> Fichier log fermé"
+	@echo "===> Fichier activity.log fermé"
+
+viewerrorslogfile:
+	@echo "===> Ouverture du fichier errors.log"
+	@nano ./logs/errors.log
+	@echo "===> Fichier errors.log fermé"
