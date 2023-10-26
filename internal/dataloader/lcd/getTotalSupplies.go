@@ -33,7 +33,7 @@ type StructReponseTotalSupplies struct {
 }
 
 
-func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplies, string) {
+func GetTotalSupplies(channelForLogsMsgs chan<- string) (StructReponseTotalSupplies, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseTotalSupplies
@@ -70,7 +70,7 @@ func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplie
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, "an error was returned while fetching 'total supplies' from LCD"
+		return reponseEnRetour, "failed to unmarshal 'total supplies' from LCD"
 	}
 
 	// Récupération des total supplies du LUNC (uluna) et de l'USTC (uusd)
@@ -96,7 +96,7 @@ func GetTotalSupplies(channelForErrors chan<- string) (StructReponseTotalSupplie
 	// Si jamais les variables "LUNCtotalSupply" et "USTCtotalSupply" n'ont pas été impactées, alors on remonte une erreur
 	if(LUNCtotalSupply == -1 || USTCtotalSupply == -1) {
 		stringToReturn := fmt.Sprintf("[dataloader] GetTotalSupplies : -1 returned by function.\nError = %s", reponseJSON)
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return reponseEnRetour, "failed to get 'uusd' or 'uluna' amount from LCD (-1 returned)"
 	}
 

@@ -29,7 +29,7 @@ type StructReponseOraclePoolContent struct {
 }
 
 
-func GetOraclePoolContent(channelForErrors chan<- string) (StructReponseOraclePoolContent, string) {
+func GetOraclePoolContent(channelForLogsMsgs chan<- string) (StructReponseOraclePoolContent, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseOraclePoolContent
@@ -66,7 +66,7 @@ func GetOraclePoolContent(channelForErrors chan<- string) (StructReponseOraclePo
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, "an error was returned while fetching 'oracle pool content' from LCD"
+		return reponseEnRetour, "failed to unmarshal 'oracle pool content' from LCD"
 	}
 
 	// Récupération du nombre de Lunc et Ustc contenus dans l'Oracle Pool
@@ -92,7 +92,7 @@ func GetOraclePoolContent(channelForErrors chan<- string) (StructReponseOraclePo
 	// Si les valeurs à retourner ne sont pas supérieures à zéro, alors on remonte une erreur
 	if(nbLuncInOraclePool <= 0 || nbUstcInOraclePool <= 0) {
 		stringToReturn := fmt.Sprintf("[dataloader] GetOraclePoolContent : -1 or 0 returned by function.\nError = %s", reponseJSON)
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return reponseEnRetour, "failed to get 'oracle pool content' from LCD (-1 or 0 returned)"
 	}
 

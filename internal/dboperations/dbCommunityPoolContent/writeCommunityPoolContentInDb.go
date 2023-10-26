@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func WriteCommunityPoolContentInDb(dataFromLcd lcd.StructReponseCommunityPoolContent, channelForErrors chan<- string) {
+func WriteCommunityPoolContentInDb(dataFromLcd lcd.StructReponseCommunityPoolContent, channelForLogsMsgs chan<- string) {
 
 	// Génération des valeurs à enregistrer
 	currentTime := time.Now().UTC()
@@ -41,13 +41,13 @@ func WriteCommunityPoolContentInDb(dataFromLcd lcd.StructReponseCommunityPoolCon
 	lastInsertId, errInsert := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.NbLuncInCommunityPool, dataFromLcd.NbUstcInCommunityPool)
 	if errInsert != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] WriteCommunityPoolContentInDb : failed (%s)", errInsert.Error())
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		if strings.Contains(errInsert.Error(), "doesn't exist") {
 			// Si c'est une erreur du type "table inexistante", alors on va essayer de la créer, et de refaire l'insertion
 			bCreateTableNeeded = true
 		} else {
 			// Autre erreur, on quitte cette fonction
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>", channelForErrors)
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to insert data in DB, on first try</strong></p><p>Error : " +  errInsert.Error() + "</p>", channelForLogsMsgs)
 			return
 		}
 	}
@@ -55,31 +55,31 @@ func WriteCommunityPoolContentInDb(dataFromLcd lcd.StructReponseCommunityPoolCon
 	// Check s'il y a eu une erreur, de type "table inexistante"
 	if bCreateTableNeeded {
 		// Création de la table, car inexistante
-		errCreation := CreateCommunityPoolContentTable(channelForErrors)
+		errCreation := CreateCommunityPoolContentTable(channelForLogsMsgs)
 		if errCreation != nil {
 			stringToReturn2 := fmt.Sprintf("[dboperations] WriteCommunityPoolContentInDb : failed (%s)", errCreation.Error())
-			channelForErrors <- stringToReturn2
-			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForErrors)
+			channelForLogsMsgs <- stringToReturn2
+			mailsender.Sendmail("[TerraScan-collector] failed to create table in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to create table in DB</strong></p><p>Error : " +  errCreation.Error() + "</p>", channelForLogsMsgs)
 			return
 		}
 		stringToReturn3 := "[dboperations] WriteCommunityPoolContentInDb : new table created successfully"
-		channelForErrors <- stringToReturn3
+		channelForLogsMsgs <- stringToReturn3
 
 		// Et re-tentative d'insertion
 		lastInsertId2, errInsert2 := dbActions.ExecInsert(rqt, code, dateUTCpourMysql, bH1, bH4, bD1, bW1, bM1, bY1, dataFromLcd.NbLuncInCommunityPool, dataFromLcd.NbUstcInCommunityPool)
 
 		if errInsert2 != nil {
 			stringToReturn4 := fmt.Sprintf("[dboperations] WriteCommunityPoolContentInDb : failed (%s)", errInsert2.Error())
-			channelForErrors <- stringToReturn4
-			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForErrors)
+			channelForLogsMsgs <- stringToReturn4
+			mailsender.Sendmail("[TerraScan-collector] failed to insert data in DB", "<p><strong>WriteCommunityPoolContentInDb : failed to insert data in DB, on second try</strong></p><p>Error : " +  errInsert2.Error() + "</p>", channelForLogsMsgs)
 			return
 		}
 
 		stringToReturn5 := fmt.Sprintf("[dboperations] WriteCommunityPoolContentInDb : insert completed successfully (lastInsertId = %d)", lastInsertId2)
-		channelForErrors <- stringToReturn5
+		channelForLogsMsgs <- stringToReturn5
 	} else {
 		stringToReturn6 := fmt.Sprintf("[dboperations] WriteCommunityPoolContentInDb : insert completed successfully (lastInsertId = %d)", lastInsertId)
-		channelForErrors <- stringToReturn6
+		channelForLogsMsgs <- stringToReturn6
 	}
 
 

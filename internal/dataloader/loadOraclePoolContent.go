@@ -11,28 +11,28 @@ import (
 )
 
 
-func LoadOraclePoolContent(channelForOraclePoolContent chan<- lcd.StructReponseOraclePoolContent, channelForErrors chan<- string) {
+func LoadOraclePoolContent(channelForOraclePoolContent chan<- lcd.StructReponseOraclePoolContent, channelForLogsMsgs chan<- string) {
 
 	var idxTentatives int
 
 	for idxTentatives = 1 ; idxTentatives <= config.AppConfig.Lcd.NbOfAttemptsIfFailure ; idxTentatives++ {
-		oraclePoolContent, errOraclePoolContent := lcd.GetOraclePoolContent(channelForErrors)
+		oraclePoolContent, errOraclePoolContent := lcd.GetOraclePoolContent(channelForLogsMsgs)
 		if errOraclePoolContent == "" {
 			if idxTentatives > 1 {
 				stringToReturn4 := fmt.Sprintf("[dataloader] LoadOraclePoolContent : success of attempt %d/%d", idxTentatives, config.AppConfig.Lcd.NbOfAttemptsIfFailure)
-				channelForErrors <- stringToReturn4
-				mailsender.Sendmail("[TerraScan-collector] " + strconv.Itoa(idxTentatives) + " attempts to get data from LCD successfully", "<p><strong>LoadOraclePoolContent</strong></p><p>Script did " + strconv.Itoa(idxTentatives) + " attempts to get data from LCD successfully</p>", channelForErrors)
+				channelForLogsMsgs <- stringToReturn4
+				mailsender.Sendmail("[TerraScan-collector] " + strconv.Itoa(idxTentatives) + " attempts to get data from LCD successfully", "<p><strong>LoadOraclePoolContent</strong></p><p>Script did " + strconv.Itoa(idxTentatives) + " attempts to get data from LCD successfully</p>", channelForLogsMsgs)
 			} else {
-				channelForErrors <- "[dataloader] LoadOraclePoolContent : success"
+				channelForLogsMsgs <- "[dataloader] LoadOraclePoolContent : success"
 			}
 			
 			channelForOraclePoolContent <- oraclePoolContent
 			return
 		} else {
 			stringToReturn1 := fmt.Sprintf("[dataloader] LoadOraclePoolContent : failed attempt %d/%d", idxTentatives, config.AppConfig.Lcd.NbOfAttemptsIfFailure)
-			channelForErrors <- stringToReturn1
+			channelForLogsMsgs <- stringToReturn1
 			stringToReturn2 := fmt.Sprintf("[dataloader] LoadOraclePoolContent : %s", errOraclePoolContent)
-			channelForErrors <- stringToReturn2
+			channelForLogsMsgs <- stringToReturn2
 			// Pause de X minutes, avant de retenter, s'il reste des tentatives à faire
 			if idxTentatives != config.AppConfig.Lcd.NbOfAttemptsIfFailure {
 				time.Sleep(time.Duration(config.AppConfig.Lcd.NbMinutesOfBreakBetweenAttempts) * time.Minute)
@@ -40,10 +40,10 @@ func LoadOraclePoolContent(channelForOraclePoolContent chan<- lcd.StructReponseO
 		}
 	}
 
-	mailsender.Sendmail("[TerraScan-collector] impossible to load datas from LCD", "<p><strong>Impossible to load datas from LCD</strong></p><p>" + strconv.Itoa(config.AppConfig.Lcd.NbOfAttemptsIfFailure) + " attempts, and no success</p>", channelForErrors)
+	mailsender.Sendmail("[TerraScan-collector] impossible to load datas from LCD", "<p><strong>Impossible to load datas from LCD</strong></p><p>" + strconv.Itoa(config.AppConfig.Lcd.NbOfAttemptsIfFailure) + " attempts, and no success</p>", channelForLogsMsgs)
 
 	stringToReturn3 := fmt.Sprintf("[dataloader] LoadOraclePoolContent : impossible to load datas from LCD, even after %d attempts", config.AppConfig.Lcd.NbOfAttemptsIfFailure)
-	channelForErrors <- stringToReturn3
+	channelForLogsMsgs <- stringToReturn3
 
 	channelForOraclePoolContent <- lcd.StructReponseOraclePoolContent{}
 

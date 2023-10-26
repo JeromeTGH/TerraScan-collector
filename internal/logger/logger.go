@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func WriteLog(textToAppend string) {
@@ -18,17 +19,40 @@ func WriteLog(textToAppend string) {
 
 func WriteLogWithoutPrinting(textToAppend string) {
 
-	// Ouverture du fichier log
-	logFile, errOpenLogFile := os.OpenFile("./logs/activity.log", os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)	// 6 = rw pour le créateur, 4=read only pour les autres
-	if errOpenLogFile != nil {
-		panic(errOpenLogFile)
+	// ***********************************************************
+	// Enregistrement de l'activité dans le fichier "activity.log"
+	// ***********************************************************
+
+	// Ouverture du fichier activity.log
+	activityLogFile, errOpenActivityLogFile := os.OpenFile("./logs/activity.log", os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)	// 6 = rw pour le créateur, 4=read only pour les autres
+	if errOpenActivityLogFile != nil {
+		panic(errOpenActivityLogFile)
 	}
-	defer logFile.Close()
+	defer activityLogFile.Close()
 
 	// Écriture d'une nouvelle ligne
-	logger := log.New(logFile, "", log.LstdFlags)
-	logger.Println(textToAppend)
-	// Nota : exemple de ligne écrite :
-	//              2023/10/17 21:46:18 [main] script called
+	logger := log.New(activityLogFile, "", log.LstdFlags)
+	logger.Println(textToAppend)		// Nota : exemple de ligne écrite :      2023/10/17 21:46:18 [main] script called
+	
+	// *******************************************************
+	// Enregistrement des erreurs dans le fichier "errors.log"
+	// *******************************************************
+	message := strings.ToLower(textToAppend)
+	if (strings.Contains(message, "error") || strings.Contains(message, "failed") || strings.Contains(message, "impossible")) {
+
+		// Ouverture du fichier errors.log
+		errorsLogFile, errOpenErrorsLogFile := os.OpenFile("./logs/errors.log", os.O_APPEND | os.O_CREATE | os.O_WRONLY, 0644)	// 6 = rw pour le créateur, 4=read only pour les autres
+		if errOpenErrorsLogFile != nil {
+			panic(errOpenErrorsLogFile)
+		}
+		defer errorsLogFile.Close()
+
+		// Écriture d'une nouvelle ligne
+		logger := log.New(errorsLogFile, "", log.LstdFlags)
+		logger.Println(textToAppend)		// Nota : exemple de ligne écrite :      2023/10/17 21:46:18 [main] script called
+
+	}
+
+
 	
 }

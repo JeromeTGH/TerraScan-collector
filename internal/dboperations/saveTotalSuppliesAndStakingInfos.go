@@ -10,7 +10,7 @@ import (
 )
 
 
-func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructReponseTotalSupplies, nbStakedLuncChannel <-chan lcd.StructReponseNbStakedLunc, exitChannel chan<- bool, channelForErrors chan<- string) () {
+func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructReponseTotalSupplies, nbStakedLuncChannel <-chan lcd.StructReponseNbStakedLunc, exitChannel chan<- bool, channelForLogsMsgs chan<- string) () {
 
 	totalSuppliesStruct := <- totalSuppliesChannel
 	nbStakedLuncStruct := <- nbStakedLuncChannel
@@ -21,13 +21,13 @@ func SaveTotalSuppliesAndStakingInfos(totalSuppliesChannel <-chan lcd.StructRepo
 	if(totalSuppliesStruct != lcd.StructReponseTotalSupplies{}) {
 
 		// Enregistrement des total supplies
-		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct, channelForErrors)
+		dbTotalSupplies.WriteTotalSuppliesInDb(totalSuppliesStruct, channelForLogsMsgs)
 
 		// Enregistrement du nombre de LUNC stakés, et du taux de staking
-		dbLuncStaking.WriteNbStakedLuncInDb(nbStakedLuncStruct, stakingPercentage, channelForErrors)
+		dbLuncStaking.WriteNbStakedLuncInDb(nbStakedLuncStruct, stakingPercentage, channelForLogsMsgs)
 
 	} else {
-		fmt.Println("Total supplies error")
+		fmt.Println("SaveTotalSuppliesAndStakingInfos error")
 	}
 
 	exitChannel <- true

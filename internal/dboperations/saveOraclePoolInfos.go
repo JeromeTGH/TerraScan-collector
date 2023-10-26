@@ -8,17 +8,17 @@ import (
 )
 
 
-func SaveOraclePoolInfos(oraclePoolContentChannel <-chan lcd.StructReponseOraclePoolContent, exitChannel chan<- bool, channelForErrors chan<- string) () {
+func SaveOraclePoolInfos(oraclePoolContentChannel <-chan lcd.StructReponseOraclePoolContent, exitChannel chan<- bool, channelForLogsMsgs chan<- string) () {
 
 	oraclePoolContent := <- oraclePoolContentChannel
 	
 	if(oraclePoolContent != lcd.StructReponseOraclePoolContent{}) {
 
 		// Enregistrement du nombre de LUNC et USTC contenus dans l'Oracle Pool
-		dbOraclePoolContent.WriteOraclePoolContentInDb(oraclePoolContent, channelForErrors)
+		dbOraclePoolContent.WriteOraclePoolContentInDb(oraclePoolContent, channelForLogsMsgs)
 
 	} else {
-		fmt.Println("SaveCommunityPoolInfos error")
+		fmt.Println("SaveOraclePoolInfos error")
 	}
 
 	exitChannel <- true

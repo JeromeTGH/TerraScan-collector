@@ -29,7 +29,7 @@ type StructReponseNbStakedLunc struct {
 }
 
 
-func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc, string) {
+func GetNbStakedLunc(channelForLogsMsgs chan<- string) (StructReponseNbStakedLunc, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseNbStakedLunc
@@ -66,7 +66,7 @@ func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc,
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, "an error was returned while fetching 'nb staked lunc' from LCD"
+		return reponseEnRetour, "failed to unmarshal 'nb staked lunc' from LCD"
 	}
 
 	// Récupération du nombre de Lunc stakés ("bonded tokens")
@@ -80,7 +80,7 @@ func GetNbStakedLunc(channelForErrors chan<- string) (StructReponseNbStakedLunc,
 	// Si jamais ce n'est pas supérieur à zéro, alors on remonte une erreur
 	if(nbStakedLunc <= 0) {
 		stringToReturn := fmt.Sprintf("[dataloader] GetNbStakedLunc : -1 or 0 returned by function.\nError = %s", reponseJSON)
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return reponseEnRetour, "failed to get 'bonded tokens' from LCD (-1 or 0 returned)"
 	}
 

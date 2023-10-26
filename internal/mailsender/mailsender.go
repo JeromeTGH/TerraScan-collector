@@ -6,20 +6,20 @@ import (
 )
 
 
-func Sendmail(sujet string, body string, channelForErrors chan<- string) {
+func Sendmail(sujet string, body string, channelForLogsMsgs chan<- string) {
 
-    message := gomail.NewMessage()
-    message.SetHeader("From", config.AppConfig.Email.From)
-    message.SetHeader("To", config.AppConfig.Email.To)
-    message.SetHeader("Subject", sujet)
-    message.SetBody("text/html", body)
+	message := gomail.NewMessage()
+	message.SetHeader("From", config.AppConfig.Email.From)
+	message.SetHeader("To", config.AppConfig.Email.To)
+	message.SetHeader("Subject", sujet)
+	message.SetBody("text/html", body)
 
 	dialer := gomail.NewDialer(config.AppConfig.Email.HostName, config.AppConfig.Email.SmtpPort, config.AppConfig.Email.From, config.AppConfig.Email.Pwd)
 
-    if err := dialer.DialAndSend(message); err != nil {
-		channelForErrors <- "[mailsender] failed to send mail"
-    } else {
-		channelForErrors <- "[mailsender] email sent successfully"
+	if err := dialer.DialAndSend(message); err != nil {
+		channelForLogsMsgs <- "[mailsender] failed to send mail"
+	} else {
+		channelForLogsMsgs <- "[mailsender] email sent successfully"
 	}
 
 }

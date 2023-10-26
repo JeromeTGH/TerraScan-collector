@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func CreateCommunityPoolContentTable(channelForErrors chan<- string) error {
+func CreateCommunityPoolContentTable(channelForLogsMsgs chan<- string) error {
 
 	// Construction de la requête
 	rqt := "CREATE TABLE IF NOT EXISTS " + config.AppConfig.Bdd.TblCommunityPoolContent + " ("
@@ -29,7 +29,7 @@ func CreateCommunityPoolContentTable(channelForErrors chan<- string) error {
 	errExec := dbActions.ExecCreateOrDrop(rqt)
 	if errExec != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] CreateCommunityPoolContentTable : failed (%s)", errExec.Error())
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return errExec
 	}
 

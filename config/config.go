@@ -48,10 +48,10 @@ func LoadConfig() {
 	_, errStat := os.Stat(configDataFile)
 	if errStat != nil {
 		if os.IsNotExist(errStat) {
-			logger.WriteLog("[config] config file not found")
+			logger.WriteLog("[config] error : config file not found")
 			os.Exit(500)
 		} else {
-			logger.WriteLog("[config] " + errStat.Error())
+			logger.WriteLog("[config] error : " + errStat.Error())
 			panic(errStat)
 		}
 	}
@@ -65,7 +65,7 @@ func LoadConfig() {
 
 	// Mesure la quantité de données, pour savoir le fichier de config contient un "minimum" de données
 	if len(privateData) < 300 {
-		logger.WriteLog("[config] not enough data, in config file")
+		logger.WriteLog("[config] error : not enough data, in config file")
 		os.Exit(500)
 	}
 

@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func DropOraclePoolContentTable(channelForErrors chan<- string) error {
+func DropOraclePoolContentTable(channelForLogsMsgs chan<- string) error {
 
 	// Construction de la requête
 	rqt := "DROP TABLE IF EXISTS " + config.AppConfig.Bdd.TblOraclePoolContent
@@ -17,7 +17,7 @@ func DropOraclePoolContentTable(channelForErrors chan<- string) error {
 	errExec := dbActions.ExecCreateOrDrop(rqt)	
 	if errExec != nil {
 		stringToReturn := fmt.Sprintf("[dboperations] DropOraclePoolContentTable : failed (%s)", errExec.Error())
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return errExec
 	}
 

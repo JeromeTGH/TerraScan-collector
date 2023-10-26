@@ -29,7 +29,7 @@ type StructReponseCommunityPoolContent struct {
 }
 
 
-func GetCommunityPoolContent(channelForErrors chan<- string) (StructReponseCommunityPoolContent, string) {
+func GetCommunityPoolContent(channelForLogsMsgs chan<- string) (StructReponseCommunityPoolContent, string) {
 
 	// Initialisation de la struct qui sera renvoyée en retour
 	var reponseEnRetour StructReponseCommunityPoolContent
@@ -66,7 +66,7 @@ func GetCommunityPoolContent(channelForErrors chan<- string) (StructReponseCommu
 
 	// Sortie si erreur retournée
 	if dataStruct.Error.Message != "" {
-		return reponseEnRetour, "an error was returned while fetching 'community pool content' from LCD"
+		return reponseEnRetour, "failed to unmarshal 'community pool content' from LCD"
 	}
 
 	// Récupération du nombre de Lunc et Ustc contenus dans le Community Pool
@@ -92,7 +92,7 @@ func GetCommunityPoolContent(channelForErrors chan<- string) (StructReponseCommu
 	// Si les valeurs à retourner ne sont pas supérieures à zéro, alors on remonte une erreur
 	if(nbLuncInCommunityPool <= 0 || nbUstcInCommunityPool <= 0) {
 		stringToReturn := fmt.Sprintf("[dataloader] GetCommunityPoolContent : -1 or 0 returned by function.\nError = %s", reponseJSON)
-		channelForErrors <- stringToReturn
+		channelForLogsMsgs <- stringToReturn
 		return reponseEnRetour, "failed to get 'community pool content' from LCD (-1 or 0 returned)"
 	}
 
