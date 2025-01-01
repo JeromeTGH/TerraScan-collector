@@ -1,6 +1,6 @@
 # TerraScan-collector
 
-A collector for [TerraScan app](https://terrascan.jtapp.dev/)<br />
+A collector for [TerraScan app](https://scan.terraclassic.app/)<br />
 GitHub : https://github.com/JeromeTGH/TerraScan-collector
 
 
